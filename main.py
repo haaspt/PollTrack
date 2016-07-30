@@ -4,7 +4,7 @@ import pandas as pd
 
 url = "http://www.realclearpolitics.com/epolls/2016/president/us/general_election_trump_vs_clinton-5491.html"
 
-page = urllib2.urlread(url).read()
+page = urllib2.urlopen(url).read()
 soup = BeautifulSoup(page)
 
 table = soup.find_all(class_ = "data large ")[1] #Grabs the second table containing all Gen. Election poll data
@@ -28,3 +28,5 @@ df["Start_Date"] = df["Date"].str.extract("^(\d+\/\d+)")
 df["End_Date"] = df["Date"].str.extract("(\d+\/\d+)$")
 
 df = df.drop(labels=["Sample","Date"], axis=1)
+
+df.to_csv("data.csv", index=False)
