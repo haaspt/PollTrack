@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 import urllib2
 import pandas as pd
 
-url = "http://www.realclearpolitics.com/epolls/2016/president/us/general_election_trump_vs_clinton-5491.html"
 
 url_dict = {
     "general_2way": "http://www.realclearpolitics.com/epolls/2016/president/us/general_election_trump_vs_clinton-5491.html",
@@ -49,6 +48,7 @@ def clean_data(df):
     df["Sample_Type"] = df["Sample"].str.extract("([A-Z]+)")
     df["Winner"] = df["Spread"].str.extract("(\D+) ")
     df["Spread"] = df["Spread"].str.extract("\+(\d*)")
+    df["Spread"] = df["Spread"].fillna(0)
     df["Start_Date"] = df["Date"].str.extract("^(\d+\/\d+)")
     df["End_Date"] = df["Date"].str.extract("(\d+\/\d+)$")
 
