@@ -29,12 +29,15 @@ def scrape_data(url):
     page = urllib2.urlopen(url).read()
     soup = BeautifulSoup(page)
 
-    table = soup.find_all(class_ = "data large ")[1] #Grabs the second table containing all Gen. Election poll data
+
+    table = soup.find_all(class_ = "data large ")[-1] #Grabs the last table, containing all Gen. Election poll data
+
 
     columns = [label.get_text() for label in table.find(class_ = "header")]
 
     rows = []
 
+    #Add function to deal with single line tables
     for table_rows in table.find_all("tr")[2:]: #Skip the column headers and RCP average row
           rows.append([item.get_text() for item in table_rows.find_all("td")])
 
