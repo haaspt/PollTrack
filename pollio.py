@@ -69,5 +69,9 @@ class PollIO(object):
         -------
         pandas dataframe containing the records only contained in the latest polls
         """
-        # Compare the two frames and only return those added since last save
+        lastest_hash = latest_poll_df.apply(lambda x: hash(tuple(x)), axis=1)
+        saved_hash = saved_poll_df.apply(lambda x: hash(tuple(x)), axis=1)
+
+        new_polls_df = latest_poll_df[latest_hash.isin(saved_hash).apply(lambda x: not x)]
+
         return new_polls_df
