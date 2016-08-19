@@ -72,6 +72,6 @@ class PollIO(object):
         lastest_hash = latest_poll_df.apply(lambda x: hash(tuple(x)), axis=1)
         saved_hash = saved_poll_df.apply(lambda x: hash(tuple(x)), axis=1)
 
-        new_polls_df = latest_poll_df[latest_hash.isin(saved_hash).apply(lambda x: not x)]
+        new_polls_df = latest_poll_df[~latest_hash.isin(saved_hash)]
 
         return new_polls_df
