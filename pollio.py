@@ -13,8 +13,8 @@ class PollIO(object):
         self.file_path = file_path
         self.file_name = file_name
 
-        self.latest_poll_data = self.latest_poll_data(self.poll_data_url)
-        self.saved_poll_data = self.load_saved_poll_data(self.file_path, self.file_name)
+        self.latest_poll_data = self.get_latest_poll_data(self.poll_data_url)
+        self.saved_poll_data = self.load_saved_poll_data()
         self.new_poll_data = self.new_polls(self.saved_poll_data, self.latest_poll_data)
 
     def get_latest_poll_data(self, csv_url):
@@ -84,7 +84,7 @@ class PollIO(object):
         pandas dataframe containing the records only contained in the latest polls
         """
         #Applies a hash function to create a unqiue identifier for each poll/row in both dataframes
-        lastest_hash = latest_poll_df.apply(lambda x: hash(tuple(x)), axis=1)
+        latest_hash = latest_poll_df.apply(lambda x: hash(tuple(x)), axis=1)
         saved_hash = saved_poll_df.apply(lambda x: hash(tuple(x)), axis=1)
         #Returns rows from the latest poll dataframe whose hash value isn't in the last saved file
         new_polls_df = latest_poll_df[latest_hash.isin(saved_hash).apply(lambda x: not x)]
