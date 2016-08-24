@@ -1,5 +1,10 @@
 from __future__ import print_function
 import pandas as pd
+import logging
+import traceback
+
+
+logger = logging.getLogger(__name__)
 
 class PollIO(object):
 
@@ -24,8 +29,14 @@ class PollIO(object):
         -------
         pandas dataframe of the loaded data
         """
-        df = pd.read_csv(csv_url)
-        return df
+        try:
+            logger.info('Downloading latest polls from web address')
+            df = pd.read_csv(csv_url)
+            logger.info('Downloaded data contains %d polls', len(df.index))
+            return df
+        except Exception as error:
+            logger.error(traceback.format_exc())
+            return None
 
     def save_poll_data(self, dataframe):
         """Saves a dataframe to the designated location
@@ -39,6 +50,7 @@ class PollIO(object):
         -------
         None
         """
+        logger.info('Saving polls to disk')
         dataframe.to_csv(self.file_path + self.file_name, index=False)
 
     def load_saved_poll_data(self):
@@ -52,6 +64,8 @@ class PollIO(object):
         -------
         pandas dataframe of the loaded data
         """
+        
+        logging.info('Loading saved polls from disk')
         df = pd.read_csv(self.file_path + self.file_name)
         return df
 
@@ -69,9 +83,14 @@ class PollIO(object):
         -------
         pandas dataframe containing the records only contained in the latest polls
         """
+        #Applies a hash function to create a unqiue identifier for each poll/row in both dataframes
         lastest_hash = latest_poll_df.apply(lambda x: hash(tuple(x)), axis=1)
         saved_hash = saved_poll_df.apply(lambda x: hash(tuple(x)), axis=1)
-
+        #Returns rows from the latest poll dataframe whose hash value isn't in the last saved file
         new_polls_df = latest_poll_df[latest_hash.isin(saved_hash).apply(lambda x: not x)]
-
-        return new_polls_df
+        logging.info('Latest poll data contained %d new polls.', len(new_polls_df.index))
+        
+        if len(new_polls_df.index) > 0:
+            return new_polls_df
+        else:
+            return None
