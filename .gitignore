@@ -1,2 +1,5 @@
 #Data
-data.csv
+*.csv
+
+#Config Files
+*.config
