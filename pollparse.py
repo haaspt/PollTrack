@@ -21,5 +21,6 @@ class PollParse(object):
 
     def rolling_average(self, dataframe):
 
-        #Code
-        
+        #This code doesn't work yet
+        dataframe.resample('1d').median().rolling(window=14, min_period=1).mean().fillna(method='ffill')
+        return dataframe
