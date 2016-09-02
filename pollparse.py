@@ -2,6 +2,8 @@ from __future__ import print_function
 import pandas as pd
 import logging
 
+logger = logging.getLogger(__name__)
+
 class PollParse(object):
 
     def combine_polls(self, dataframe1, dataframe2):
