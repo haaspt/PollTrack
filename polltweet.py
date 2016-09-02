@@ -5,11 +5,11 @@ import traceback
 
 class PollTweet(object):
 
-    def __init__(self, consumer_key, consumer_secret, access_token_key, access_token_secret):
-        self.twitter = twitter.api(consumer_key = consumer_key,
-                                   consumer_secret = consumer_secret,
-                                   access_token_key = access_token_key,
-                                   access_token_secret)
+    def __init__(self, user_consumer_key, user_consumer_secret, user_access_token_key, user_access_token_secret):
+        self.twitter = twitter.Api(consumer_key = user_consumer_key,
+                                   consumer_secret = user_consumer_secret,
+                                   access_token_key = user_access_token_key,
+                                   access_token_secret = user_access_token_secret)
 
     def tweet_poll(self, poll_data):
         # Parse out poll_data
