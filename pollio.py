@@ -92,6 +92,7 @@ class PollIO(object):
         #Applies a hash function to create a unqiue identifier for each poll/row in both dataframes
         latest_hash = latest_poll_df.apply(lambda x: hash(tuple(x)), axis=1)
         saved_hash = saved_poll_df.apply(lambda x: hash(tuple(x)), axis=1)
+
         #Returns rows from the latest poll dataframe whose hash value isn't in the last saved file
         new_polls_df = latest_poll_df[latest_hash.isin(saved_hash).apply(lambda x: not x)]
         logging.info('Latest poll data contained %d new polls.', len(new_polls_df.index))
@@ -100,3 +101,4 @@ class PollIO(object):
             return new_polls_df
         else:
             return None
+
