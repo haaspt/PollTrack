@@ -38,7 +38,7 @@ class PollIO(object):
             logger.error(traceback.format_exc())
             return None
 
-    def save_poll_data(self, dataframe, filename=self.file_name, filepath=self.file_path):
+    def save_poll_data(self, dataframe, filename=None, filepath=None):
         """Saves a dataframe to the designated location
 
         Parameters
@@ -57,6 +57,10 @@ class PollIO(object):
         None
         """
         logger.info('Saving polls to disk')
+        if filename is None:
+            filename = self.file_name
+        if filepath is None:
+            filepath = self.file_path
         dataframe.to_csv(filepath + filename, index=False)
 
     def load_saved_poll_data(self):
