@@ -2,7 +2,7 @@ from __future__ import print_function
 import pandas as pd
 import logging
 import traceback
-
+import os.path
 
 logger = logging.getLogger(__name__)
 
@@ -13,11 +13,11 @@ class PollIO(object):
         self.file_path = file_path
         self.file_name = file_name
 
-        self.latest_poll_data = self.get_latest_poll_data(self.poll_data_url)
+        self.latest_poll_data = self.get_latest_poll_data()
         self.saved_poll_data = self.load_saved_poll_data()
         self.new_poll_data = self.new_polls(self.saved_poll_data, self.latest_poll_data)
 
-    def get_latest_poll_data(self, csv_url):
+    def get_latest_poll_data(self, csv_url=None):
         """Loads the latest polls from Huffington Post Pollster
 
         Parameters
@@ -31,9 +31,12 @@ class PollIO(object):
         """
         try:
             logger.info('Downloading latest polls from web address')
+            if csv_url is None:
+                csv_url = self.poll_data_url
             df = pd.read_csv(csv_url)
             logger.info('Downloaded data contains %d polls', len(df.index))
-            return df
+            self.latest_poll_data = df
+            return self.latest_poll_data
         except Exception as error:
             logger.error(traceback.format_exc())
             return None
@@ -75,9 +78,17 @@ class PollIO(object):
         pandas dataframe of the loaded data
         """
         
-        logging.info('Loading saved polls from disk')
-        df = pd.read_csv(self.file_path + self.file_name)
-        return df
+        if os.path.isfile(self.file_path + self.file_name):
+            logging.info('Loading saved polls from disk')
+            df = pd.read_csv(self.file_path + self.file_name)
+            self.saved_poll_data = df
+            return self.saved_poll_data
+        else:
+            logging.info('No saved datafile found, downloading latest data')
+            df = self.get_latest_poll_data()
+            self.save_poll_data(df)
+            self.saved_poll_data = df
+            return self.saved_poll_data
 
     def new_polls(self, saved_poll_df, latest_poll_df):
         """Compares latest polls to those previously saved
@@ -102,7 +113,8 @@ class PollIO(object):
         logging.info('Latest poll data contained %d new polls.', len(new_polls_df.index))
         
         if len(new_polls_df.index) > 0:
-            return new_polls_df
+            self.new_poll_data = new_polls_df
+            return self.new_poll_data
         else:
-            return None
+            self.new_poll_data = None
 
