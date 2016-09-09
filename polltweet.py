@@ -3,6 +3,7 @@ import twitter
 import logging
 import traceback
 
+
 class PollTweet(object):
 
     def __init__(self, user_consumer_key, user_consumer_secret, user_access_token_key, user_access_token_secret):

@@ -117,4 +117,3 @@ class PollIO(object):
             return self.new_poll_data
         else:
             self.new_poll_data = None
-
