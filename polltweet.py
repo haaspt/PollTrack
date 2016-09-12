@@ -3,7 +3,38 @@ import twitter
 import logging
 import traceback
 
+class Tweet(object):
 
+    def __init__(self, pollster, start_date, end_date, clinton_pct, trump_pct,
+                 other_pct=None, undecided_pct=None, johnson_pct=None, stein_pct=None):
+        self.pollster = pollster
+        self.start_date = start_date
+        self.end_date = end_date
+        self.clinton_pct = clinton_pct
+        self.trump_pct = trump_pct
+        self.other_pct = other_pct
+        self.undecided_pct = undecided_pct
+        self.johnson_pct = johnson_pct
+        self.stein_pct = stein_pct
+
+    def __repr__(self):
+        return """
+        Pollster: {pollster}
+        Start Date: {start_date}
+        End Date: {end_date}
+        Clinton: {clinton_pct}
+        Trump: {trump_pct}
+        Other: {other_pct}
+        Undecided: {undecided_pct}
+        Johnson: {johnson_pct}
+        Stein: {stein_pct}
+        """.format(pollster = self.pollster, start_date = self.start_date,
+                   end_date = self.end_date, clinton_pct = self.clinton_pct,
+                   trump_pct = self.trump_pct, other_pct = self.other_pct,
+                   undecided_pct = self.undecided_pct, johnson_pct = self.johnson_pct,
+                   stein_pct = self.stein_pct)
+
+        
 class PollTweet(object):
 
     def __init__(self, user_consumer_key, user_consumer_secret, user_access_token_key, user_access_token_secret):
@@ -31,6 +62,3 @@ class PollTweet(object):
     def reply_to_mention(self, mention):
         # Parse mention syntax
         return
-
-    
-        
