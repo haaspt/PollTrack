@@ -11,10 +11,10 @@ def main():
         credentials = json.load(file)
         twitter_credentials = credentials['twitter_credentials']
 
-    polltweet = PollTweet(user_consumer_key = twitter_credentials['user_consumer_key'],
-                          user_consumer_secret = twitter_credentials['user_consumer_secret'],
-                          user_access_token_key = twitter_credentials['user_access_token_key'],
-                          user_access_token_secret = twitter_credentials['user_access_token_secret'])
+    polltweet = PollTweet(twitter_credentials['consumer_key'],
+                          twitter_credentials['consumer_secret'],
+                          twitter_credentials['access_token_key'],
+                          twitter_credentials['access_token_secret'])
     
     poll_url = "http://elections.huffingtonpost.com/pollster/2016-general-election-trump-vs-clinton.csv"
     pollio = PollIO(poll_url, "./", "data.csv")
