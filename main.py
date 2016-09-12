@@ -1,6 +1,7 @@
+#!/usr/bin/env python
 from __future__ import print_function
 from pollio import PollIO
-from polltweet import PollTweet, Tweet
+from polltweet import PollTweet
 from pollparse import PollParse
 import os.path
 import json
