@@ -2,14 +2,21 @@ from __future__ import print_function
 from pollio import PollIO
 from polltweet import PollTweet, Tweet
 from pollparse import PollParse
+import os.path
 import json
 import logging
 
+class ConfigFileError(Exception):
+    pass
+
 def main():
 
-    with open('credentials.config') as file:
-        credentials = json.load(file)
-        twitter_credentials = credentials['twitter_credentials']
+    if not os.path.isfile('credentials.config'):
+        raise CongigFileError("Credentials file not found, please see documentation for created a credential file")
+    else:
+        with open('credentials.config') as file:
+            credentials = json.load(file)
+            twitter_credentials = credentials['twitter_credentials']
 
     polltweet = PollTweet(twitter_credentials['consumer_key'],
                           twitter_credentials['consumer_secret'],
