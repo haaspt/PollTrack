@@ -1,30 +1,42 @@
 from __future__ import print_function
 from pollio import PollIO
-from polltweet import PollTweet
+from polltweet import PollTweet, Tweet
 from pollparse import PollParse
+import os.path
+import json
 import logging
 
-def check_for_new_polls(url):
+class ConfigFileError(Exception):
+    pass
 
-    latest_polls = pollio.get_latest_polls(url)
-    old_polls = pollio.load_saved_polls()
-    new_polls = pollio.new_polls(old_polls, latest_polls)
-    if new_polls is None:
-        return None
-    else:
-        pollio.save_poll_data(latest_polls)
-        return new_polls
-
-    
 def main():
 
+    if not os.path.isfile('credentials.config'):
+        raise CongigFileError("Credentials file not found, please see documentation for created a credential file")
+    else:
+        with open('credentials.config') as file:
+            credentials = json.load(file)
+            twitter_credentials = credentials['twitter_credentials']
+
+    polltweet = PollTweet(twitter_credentials['consumer_key'],
+                          twitter_credentials['consumer_secret'],
+                          twitter_credentials['access_token_key'],
+                          twitter_credentials['access_token_secret'])
+    
     poll_url = "http://elections.huffingtonpost.com/pollster/2016-general-election-trump-vs-clinton.csv"
-
     pollio = PollIO(poll_url, "./", "data.csv")
-
-    new_polls = check_for_new_polls(poll_ulr)
+    
+    new_polls = pollio.new_poll_data
     if new_polls is not None:
-        tweet_new_polls()
+        tweet_list = []
+        for row in new_polls.iterrows():
+            row = row[1]
+            tweet = Tweet(row['Pollster'], row['Start Date'], row['End Date'],
+                          row['Clinton'], row['Trump'], row['Other'], row['Undecided'])
+            tweet_list.append(tweet)
+
+        #for tweet in tweet_list:
+        #    polltweet.tweet_poll(tweet)
 
 if __name__ == "__main__":
     main()
