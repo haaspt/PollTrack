@@ -1,30 +1,35 @@
 from __future__ import print_function
 from pollio import PollIO
-from polltweet import PollTweet
+from polltweet import PollTweet, Tweet
 from pollparse import PollParse
+import json
 import logging
 
-def check_for_new_polls(url):
-
-    latest_polls = pollio.get_latest_polls(url)
-    old_polls = pollio.load_saved_polls()
-    new_polls = pollio.new_polls(old_polls, latest_polls)
-    if new_polls is None:
-        return None
-    else:
-        pollio.save_poll_data(latest_polls)
-        return new_polls
-
-    
 def main():
 
+    with open('credentials.config') as file:
+        credentials = json.load(file)
+        twitter_credentials = credentials['twitter_credentials']
+
+    polltweet = PollTweet(user_consumer_key = twitter_credentials['user_consumer_key'],
+                          user_consumer_secret = twitter_credentials['user_consumer_secret'],
+                          user_access_token_key = twitter_credentials['user_access_token_key'],
+                          user_access_token_secret = twitter_credentials['user_access_token_secret'])
+    
     poll_url = "http://elections.huffingtonpost.com/pollster/2016-general-election-trump-vs-clinton.csv"
-
     pollio = PollIO(poll_url, "./", "data.csv")
-
-    new_polls = check_for_new_polls(poll_ulr)
+    
+    new_polls = pollio.new_poll_data
     if new_polls is not None:
-        tweet_new_polls()
+        tweet_list = []
+        for row in new_polls.iterrows():
+            row = row[1]
+            tweet = Tweet(row['Pollster'], row['Start Date'], row['End Date'],
+                          row['Clinton'], row['Trump'], row['Other'], row['Undecided'])
+            tweet_list.append(tweet)
+
+        #for tweet in tweet_list:
+        #    polltweet.tweet_poll(tweet)
 
 if __name__ == "__main__":
     main()
