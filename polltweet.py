@@ -6,6 +6,9 @@ import traceback
 
 logger = logging.getLogger(__name__)
 
+class TweetError(Exception):
+    pass
+
 class Tweet(object):
 
 
@@ -62,11 +65,18 @@ class PollTweet(object):
 
     def tweet_poll(self, tweet):
         # Parse out poll_data
-        self.twitter.PostUpdate(tweet)
+        if not isinstance(tweet, Tweet):
+            raise TweetError("Object passed is not a Tweet object. Unable to post")
+        else:
+            self.twitter.PostUpdate(tweet)
 
     def tweet_polls(self, list_of_tweets):
         for tweet in list_of_tweets:
-            self.tweet_poll(tweet)
+            try:
+                self.tweet_poll(tweet)
+            except TweetError as error:
+                logger.error(traceback.format_exc())
+
 
     def tweet_average(self, average_data):
         # Do something
