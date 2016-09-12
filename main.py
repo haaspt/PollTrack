@@ -9,6 +9,13 @@ import logging
 class ConfigFileError(Exception):
     pass
 
+def get_and_tweet_new_polls(url):
+
+    pollio = PollIO(url, "./", "data.csv")
+    if pollio.new_poll_data is not None:
+        tweet_list = polltweet.pandas_to_tweet(pollio.new_poll_data)
+        polltweet.tweet_polls(tweet_list)
+
 def main():
 
     if not os.path.isfile('credentials.config'):
@@ -17,26 +24,17 @@ def main():
         with open('credentials.config') as file:
             credentials = json.load(file)
             twitter_credentials = credentials['twitter_credentials']
+            file.close()
 
-    polltweet = PollTweet(twitter_credentials['consumer_key'],
-                          twitter_credentials['consumer_secret'],
-                          twitter_credentials['access_token_key'],
-                          twitter_credentials['access_token_secret'])
-    
+    global polltweet = PollTweet(twitter_credentials['consumer_key'],
+                                 twitter_credentials['consumer_secret'],
+                                 twitter_credentials['access_token_key'],
+                                 twitter_credentials['access_token_secret'])
+
     poll_url = "http://elections.huffingtonpost.com/pollster/2016-general-election-trump-vs-clinton.csv"
-    pollio = PollIO(poll_url, "./", "data.csv")
-    
-    new_polls = pollio.new_poll_data
-    if new_polls is not None:
-        tweet_list = []
-        for row in new_polls.iterrows():
-            row = row[1]
-            tweet = Tweet(row['Pollster'], row['Start Date'], row['End Date'],
-                          row['Clinton'], row['Trump'], row['Other'], row['Undecided'])
-            tweet_list.append(tweet)
 
-        #for tweet in tweet_list:
-        #    polltweet.tweet_poll(tweet)
+    while True:
+        get_and_tweet_new_polls(poll_url)
 
 if __name__ == "__main__":
     main()

@@ -38,7 +38,7 @@ class Tweet(object):
                    undecided_pct = self.undecided_pct, johnson_pct = self.johnson_pct,
                    stein_pct = self.stein_pct)
 
-        
+
 class PollTweet(object):
 
     def __init__(self, user_consumer_key, user_consumer_secret, user_access_token_key, user_access_token_secret):
@@ -47,13 +47,26 @@ class PollTweet(object):
                                    access_token_key = user_access_token_key,
                                    access_token_secret = user_access_token_secret)
 
-    def tweet_poll(self, poll_data):
-        # Parse out poll_data
-        self.twitter.PostUpdate(poll_data)
+    def pandas_to_tweet(self, dataframe):
+        if dataframe is None:
+            #This is, strickly speaking, uncessecary
+            return None
+        else:
+            tweet_list = []
+            for row in new_polls.iterrows():
+                row = row[1]
+                tweet = Tweet(row['Pollster'], row['Start Date'], row['End Date'],
+                              row['Clinton'], row['Trump'], row['Other'], row['Undecided'])
+                tweet_list.append(tweet)
+            return tweet_list
 
-    def tweet_polls(self, poll_dataframe):
-        for poll_data in poll_dataframe:
-            self.tweet_poll(poll_data)
+    def tweet_poll(self, tweet):
+        # Parse out poll_data
+        self.twitter.PostUpdate(tweet)
+
+    def tweet_polls(self, list_of_tweets):
+        for tweet in list_of_tweets:
+            self.tweet_poll(tweet)
 
     def tweet_average(self, average_data):
         # Do something
