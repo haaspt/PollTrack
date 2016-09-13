@@ -101,9 +101,6 @@ class PollTweet(object):
         ----------
         tweet: Tweet (object)
 
-        Returns
-        -------
-        nil
         """
         if not isinstance(tweet, Tweet):
             raise TweetError("Object passed is not a Tweet object. Unable to post")
@@ -122,10 +119,6 @@ class PollTweet(object):
         Parameters
         ----------
         list_of_tweets: list (of Tweet objects)
-
-        Returns
-        -------
-        nil
         """
         for tweet in list_of_tweets:
             try:

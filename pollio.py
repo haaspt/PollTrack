@@ -54,10 +54,6 @@ class PollIO(object):
         filepath: string
             Path to folder to save data to
             Default: self.file_path
-
-        Returns
-        -------
-        None
         """
         logger.info('Saving polls to disk')
         if filename is None:
@@ -70,10 +66,6 @@ class PollIO(object):
 
     def load_saved_poll_data(self):
         """Loads a saved dataframe csv from disk
-
-        Parameters
-        ----------
-        None
 
         Returns
         -------
