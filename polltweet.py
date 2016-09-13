@@ -3,14 +3,13 @@ import twitter
 import logging
 import traceback
 
-
 logger = logging.getLogger(__name__)
 
 class TweetError(Exception):
     pass
 
-class Tweet(object):
 
+class Tweet(object):
 
     def __init__(self, pollster, start_date, end_date, clinton_pct, trump_pct,
                  other_pct=None, undecided_pct=None, johnson_pct=None, stein_pct=None):
@@ -28,8 +27,12 @@ class Tweet(object):
         self.short_tweet = None #Format this too
 
     def get_tweetable_poll(self):
-        #Returns whichever tweet type is under the character limit
-        
+        """Checks whether the long or short form of a tweet is under the character limit.
+
+        Returns
+        -------
+        String less than or equal to the Twitter character limit, or None
+        """
         if len(self.long_tweet) <= 140: #Check actual character length requirements
             return self.long_tweet
         elif len(self.short_tweet) <= 140:
@@ -70,8 +73,17 @@ class PollTweet(object):
                                    access_token_secret = user_access_token_secret)
 
     def pandas_to_tweet(self, dataframe):
+        """Converts a pandas dataframe to a list of Tweet objects
+
+        Parameters
+        ----------
+        dataframe: pandas dataframe
+
+        Returns
+        -------
+        List of Tweet objects
+        """
         if dataframe is None:
-            #This is, strickly speaking, uncessecary
             return None
         else:
             tweet_list = []
@@ -83,7 +95,16 @@ class PollTweet(object):
             return tweet_list
 
     def tweet_poll(self, tweet):
-        # Parse out poll_data
+        """Posts a single poll to Twitter
+
+        Parameters
+        ----------
+        tweet: Tweet (object)
+
+        Returns
+        -------
+        nil
+        """
         if not isinstance(tweet, Tweet):
             raise TweetError("Object passed is not a Tweet object. Unable to post")
         else:
@@ -96,6 +117,16 @@ class PollTweet(object):
                 logger.error(tweet)
 
     def tweet_polls(self, list_of_tweets):
+        """Iterates through a list of tweets and passes each to self.tweet_poll()
+
+        Parameters
+        ----------
+        list_of_tweets: list (of Tweet objects)
+
+        Returns
+        -------
+        nil
+        """
         for tweet in list_of_tweets:
             try:
                 self.tweet_poll(tweet)
