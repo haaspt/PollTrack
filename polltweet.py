@@ -24,6 +24,19 @@ class Tweet(object):
         self.johnson_pct = johnson_pct
         self.stein_pct = stein_pct
 
+        self.long_tweet = None #Format this
+        self.short_tweet = None #Format this too
+
+    def get_tweetable_poll(self):
+        #Returns whichever tweet type is under the character limit
+        
+        if len(self.long_tweet) <= 140: #Check actual character length requirements
+            return self.long_tweet
+        elif len(self.short_tweet) <= 140:
+            return self.short_tweet
+        else:
+            return None
+        
     def __repr__(self):
         return """
         Pollster: {pollster}
@@ -40,6 +53,12 @@ class Tweet(object):
                    trump_pct = self.trump_pct, other_pct = self.other_pct,
                    undecided_pct = self.undecided_pct, johnson_pct = self.johnson_pct,
                    stein_pct = self.stein_pct)
+
+    def __str__(self):
+        return self.long_tweet
+    
+    def __len__(self):
+        return {"long": len(self.long_tweet), "short": len(self.short_tweet)}
 
 
 class PollTweet(object):
@@ -68,7 +87,13 @@ class PollTweet(object):
         if not isinstance(tweet, Tweet):
             raise TweetError("Object passed is not a Tweet object. Unable to post")
         else:
-            self.twitter.PostUpdate(tweet)
+            tweet_to_post = tweet.get_tweetable_poll()
+            if tweet_to_post is not None:
+                logger.info("Tweeting poll")
+                self.twitter.PostUpdate(tweet_to_post)
+            else:
+                logger.error("Could not tweet poll. Max characters exceeded")
+                logger.error(tweet)
 
     def tweet_polls(self, list_of_tweets):
         for tweet in list_of_tweets:
