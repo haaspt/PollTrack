@@ -7,11 +7,22 @@ import os.path
 import json
 import logging
 
+logger = logging.getLogger(__name__)
+
 class ConfigFileError(Exception):
     pass
 
 def get_and_tweet_new_polls(url, polltweet_instance):
+    """Calls PollIO to check for new polls and tweets any it finds
 
+    Parameters
+    ----------
+    url: string
+        The url to the poll csv on HuffPoPollster
+
+    polltweet_instance: PollTweet (object)
+        Instance of the PollTweet object
+    """
     pollio = PollIO(url, "./data/", "data.csv")
     if pollio.new_poll_data is not None:
         tweet_list = polltweet_instance.pandas_to_tweet(pollio.new_poll_data)
