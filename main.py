@@ -12,7 +12,7 @@ class ConfigFileError(Exception):
 
 def get_and_tweet_new_polls(url):
 
-    pollio = PollIO(url, "./", "data.csv")
+    pollio = PollIO(url, "./data/", "data.csv")
     if pollio.new_poll_data is not None:
         tweet_list = polltweet.pandas_to_tweet(pollio.new_poll_data)
         polltweet.tweet_polls(tweet_list)
