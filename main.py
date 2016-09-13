@@ -16,7 +16,7 @@ def get_and_tweet_new_polls(url, polltweet_instance):
     if pollio.new_poll_data is not None:
         tweet_list = polltweet_instance.pandas_to_tweet(pollio.new_poll_data)
         polltweet_instance.tweet_polls(tweet_list)
-
+        
 def main():
 
     if not os.path.isfile('credentials.config'):

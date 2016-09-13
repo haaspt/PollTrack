@@ -15,7 +15,7 @@ class PollIO(object):
 
         self.latest_poll_data = self.get_latest_poll_data()
         self.saved_poll_data = self.load_saved_poll_data()
-        self.new_poll_data = self.new_polls(self.saved_poll_data, self.latest_poll_data)
+        self.new_poll_data = self.return_new_polls(self.saved_poll_data, self.latest_poll_data)
 
     def get_latest_poll_data(self, csv_url=None):
         """Loads the latest polls from Huffington Post Pollster
@@ -48,10 +48,10 @@ class PollIO(object):
         ----------
         dataframe: pandas dataframe
             The dataframe to be saved
-        filename: string
+        filename: string, optional
             Name of the file stored to disk
             Default: self.file_name
-        filepath: string
+        filepath: string, optional
             Path to folder to save data to
             Default: self.file_path
         """
@@ -84,7 +84,7 @@ class PollIO(object):
             self.saved_poll_data = df
             return self.saved_poll_data
 
-    def new_polls(self, saved_poll_df, latest_poll_df):
+    def return_new_polls(self, saved_poll_df, latest_poll_df):
         """Compares latest polls to those previously saved
 
         Parameters
