@@ -7,8 +7,6 @@ import os.path
 import json
 import logging
 
-logger = logging.getLogger(__name__)
-
 class ConfigFileError(Exception):
     pass
 
@@ -55,4 +53,8 @@ def main():
         get_and_tweet_new_polls(poll_url, polltweet)
 
 if __name__ == "__main__":
+    logging.basicConfig(filename='applog.log',
+                        format='%(asctime)s-%(name)s :: %(levelname)s :: %(message)s'
+                        level=logging.INFO)
+    logger = logging.getLogger(__name__)
     main()
