@@ -6,6 +6,7 @@ from pollparse import PollParse
 import os.path
 import json
 import logging
+import time
 
 class ConfigFileError(Exception):
     pass
@@ -27,6 +28,7 @@ def get_and_tweet_new_polls(url, polltweet_instance):
         logger.debug("Attempting to tweet new polls")
         tweet_list = polltweet_instance.pandas_to_tweet(pollio.new_poll_data)
         polltweet_instance.tweet_polls(tweet_list)
+        pollio.save_poll_data()
         
 def main():
 
@@ -51,7 +53,8 @@ def main():
     logger.info("Entering main loop")
     while True:
         get_and_tweet_new_polls(poll_url, polltweet)
-
+        time.sleep(300)
+        
 if __name__ == "__main__":
     logging.basicConfig(filename='applog.log',
                         format='%(asctime)s-%(name)s :: %(levelname)s :: %(message)s',
