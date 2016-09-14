@@ -23,7 +23,13 @@ class Tweet(object):
         self.johnson_pct = johnson_pct
         self.stein_pct = stein_pct
 
-        self.long_tweet = None #Format this
+        self.long_tweet = "Clinton: {clinton_pct}\nTrump: {trump_pct}\nOther: {other_pct}\nUndecided: {undecided_pct}\n\n{pollster} ({start_date} - {end_date})".format(clinton_pct=self.clinton_pct,
+                                                                                                                                                                        trump_pct = self.trump_pct,
+                                                                                                                                                                        other_pct=self.other_pct,
+                                                                                                                                                                        undecided_pct=self.undecided_pct,
+                                                                                                                                                                        pollster=self.pollster,
+                                                                                                                                                                        start_date=self.start_date,
+                                                                                                                                                                        end_date=self.end_date)
         self.short_tweet = None #Format this too
 
     def get_tweetable_poll(self):
@@ -87,7 +93,7 @@ class PollTweet(object):
             return None
         else:
             tweet_list = []
-            for row in new_polls.iterrows():
+            for row in dataframe.iterrows():
                 row = row[1]
                 tweet = Tweet(row['Pollster'], row['Start Date'], row['End Date'],
                               row['Clinton'], row['Trump'], row['Other'], row['Undecided'])
@@ -109,7 +115,7 @@ class PollTweet(object):
             if tweet_to_post is not None:
                 logger.info("Tweeting poll")
                 try:
-                    self.twitter.PostUpdate(tweet_to_post)
+                    self.twitter.PostUpdate(tweet_to_post, verify_status_length=False) #Currently throws a legth exception unless this is set to false. Not sure why
                 except Exception as error:
                     logger.error(traceback.format_exc())
             else:
