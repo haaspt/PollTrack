@@ -108,7 +108,10 @@ class PollTweet(object):
             tweet_to_post = tweet.get_tweetable_poll()
             if tweet_to_post is not None:
                 logger.info("Tweeting poll")
-                self.twitter.PostUpdate(tweet_to_post)
+                try:
+                    self.twitter.PostUpdate(tweet_to_post)
+                except Exception as error:
+                    logger.error(traceback.format_exc())
             else:
                 logger.error("Could not tweet poll. Max characters exceeded")
                 logger.error(tweet)
