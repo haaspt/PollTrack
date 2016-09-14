@@ -129,6 +129,7 @@ class PollTweet(object):
         ----------
         list_of_tweets: list (of Tweet objects)
         """
+        logger.info("Tweeting %d new polls", len(list_of_tweets))
         for tweet in list_of_tweets:
             try:
                 self.tweet_poll(tweet)

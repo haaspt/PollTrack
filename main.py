@@ -37,7 +37,7 @@ def main():
         logger.error("Credentials file not found")
         raise CongigFileError("Credentials file not found, please see documentation for created a credential file")
     else:
-        with open('credentials.config') as file:
+        with open('./credentials.config') as file:
             credentials = json.load(file)
             twitter_credentials = credentials['twitter_credentials']
             file.close()
@@ -53,7 +53,8 @@ def main():
     logger.info("Entering main loop")
     while True:
         get_and_tweet_new_polls(poll_url, polltweet)
-        time.sleep(300)
+        logger.debug("Sleeping for 10 mins...")
+        time.sleep(600)
         
 if __name__ == "__main__":
     logging.basicConfig(filename='applog.log',

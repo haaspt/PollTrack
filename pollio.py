@@ -30,7 +30,7 @@ class PollIO(object):
         pandas dataframe of the loaded data
         """
         try:
-            logger.info('Downloading latest polls from web address')
+            logger.debug('Downloading latest polls from web address')
             if csv_url is None:
                 csv_url = self.poll_data_url
             df = pd.read_csv(csv_url)
@@ -55,7 +55,7 @@ class PollIO(object):
             Path to folder to save data to
             Default: self.file_path
         """
-        logger.info('Saving polls to disk')
+        logger.debug('Saving polls to disk')
         if filename is None:
             filename = self.file_name
         if filepath is None:
@@ -73,12 +73,12 @@ class PollIO(object):
         """
         
         if os.path.isfile(self.file_path + self.file_name):
-            logging.info('Loading saved polls from disk')
+            logging.debug('Loading saved polls from disk')
             df = pd.read_csv(self.file_path + self.file_name)
             self.saved_poll_data = df
             return self.saved_poll_data
         else:
-            logging.info('No saved datafile found, downloading latest data')
+            logging.error('No saved datafile found, downloading latest data')
             df = self.get_latest_poll_data()
             self.save_poll_data(df)
             self.saved_poll_data = df
