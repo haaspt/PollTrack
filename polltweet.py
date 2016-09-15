@@ -11,9 +11,10 @@ class TweetError(Exception):
 
 class Tweet(object):
 
-    def __init__(self, pollster, start_date, end_date, clinton_pct, trump_pct,
-                 other_pct=None, undecided_pct=None, johnson_pct=None, stein_pct=None):
+    def __init__(self, pollster, observations, population, start_date, end_date, clinton_pct, trump_pct, other_pct=None, undecided_pct=None, johnson_pct=None, stein_pct=None):
         self.pollster = pollster
+        self.observations = int(observations)
+        self.population = population
         self.start_date = start_date
         self.end_date = end_date
         self.clinton_pct = clinton_pct
@@ -23,14 +24,21 @@ class Tweet(object):
         self.johnson_pct = johnson_pct
         self.stein_pct = stein_pct
 
-        self.long_tweet = "Clinton: {clinton_pct}\nTrump: {trump_pct}\nOther: {other_pct}\nUndecided: {undecided_pct}\n\n{pollster} ({start_date} - {end_date})".format(clinton_pct=self.clinton_pct,
-                                                                                                                                                                        trump_pct = self.trump_pct,
-                                                                                                                                                                        other_pct=self.other_pct,
-                                                                                                                                                                        undecided_pct=self.undecided_pct,
-                                                                                                                                                                        pollster=self.pollster,
-                                                                                                                                                                        start_date=self.start_date,
-                                                                                                                                                                        end_date=self.end_date)
-        self.short_tweet = None #Format this too
+        self.long_tweet = "#Clinton: {clinton_pct}\n#Trump: {trump_pct}\nOther: {other_pct}\nUndecided: {undecided_pct}\n\n{pollster} ({start_date} - {end_date})\n{population})\".format(clinton_pct=self.clinton_pct,
+                                                                                                                                                                                        trump_pct = self.trump_pct,
+                                                                                                                                                                                        other_pct=self.other_pct,
+                                                                                                                                                                                        undecided_pct=self.undecided_pct,
+                                                                                                                                                                                        pollster=self.pollster,
+                                                                                                                                                                                        start_date=self.start_date,
+                                                                                                                                                                                        end_date=self.end_date,
+                                                                                                                                                                                        population = self.population)
+        
+        self.short_tweet = "C: {clinton_pct}\nT: {trump_pct}\n\n{pollster} ({start_date} - {end_date})\n{population}".format(clinton_pct = self.clinton_pct,
+                                                                                                               trump_pct = self.trump_pct,
+                                                                                                               pollster = self.pollster,
+                                                                                                               start_date = self.start_date,
+                                                                                                                             end_date = self.end_date,
+        population = self.population)
 
     def get_tweetable_poll(self):
         """Checks whether the long or short form of a tweet is under the character limit.
@@ -49,6 +57,8 @@ class Tweet(object):
     def __repr__(self):
         return """
         Pollster: {pollster}
+        Observations: {observations}
+        Population: {population}
         Start Date: {start_date}
         End Date: {end_date}
         Clinton: {clinton_pct}
@@ -57,7 +67,7 @@ class Tweet(object):
         Undecided: {undecided_pct}
         Johnson: {johnson_pct}
         Stein: {stein_pct}
-        """.format(pollster = self.pollster, start_date = self.start_date,
+        """.format(pollster = self.pollster, observations = self.observations, population = self.population, start_date = self.start_date,
                    end_date = self.end_date, clinton_pct = self.clinton_pct,
                    trump_pct = self.trump_pct, other_pct = self.other_pct,
                    undecided_pct = self.undecided_pct, johnson_pct = self.johnson_pct,
@@ -95,8 +105,7 @@ class PollTweet(object):
             tweet_list = []
             for row in dataframe.iterrows():
                 row = row[1]
-                tweet = Tweet(row['Pollster'], row['Start Date'], row['End Date'],
-                              row['Clinton'], row['Trump'], row['Other'], row['Undecided'])
+                tweet = Tweet(row['Pollster'] ,row['Number of Observations'], row['Population'], row['Start Date'], row['End Date'], row['Clinton'], row['Trump'], row['Other'], row['Undecided'])
                 tweet_list.append(tweet)
             return tweet_list
 
