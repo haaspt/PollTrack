@@ -108,6 +108,6 @@ class PollIO(object):
         
         if len(new_polls_df.index) > 0:
             self.new_poll_data = new_polls_df
-            return self.new_poll_data
+            return self.new_poll_data.fillna(0) #Prevents polls being posted with nan values
         else:
             self.new_poll_data = None
