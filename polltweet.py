@@ -24,7 +24,7 @@ class Tweet(object):
         self.johnson_pct = johnson_pct
         self.stein_pct = stein_pct
 
-        self.long_tweet = "#Clinton: {clinton_pct}\n#Trump: {trump_pct}\nOther: {other_pct}\nUndecided: {undecided_pct}\n\n{pollster} ({start_date} - {end_date})\n{population})\".format(clinton_pct=self.clinton_pct,
+        self.long_tweet = "#Clinton: {clinton_pct}\n#Trump: {trump_pct}\nOther: {other_pct}\nUndecided: {undecided_pct}\n\n{pollster} ({start_date} - {end_date})\n{population}".format(clinton_pct=self.clinton_pct,
                                                                                                                                                                                         trump_pct = self.trump_pct,
                                                                                                                                                                                         other_pct=self.other_pct,
                                                                                                                                                                                         undecided_pct=self.undecided_pct,
