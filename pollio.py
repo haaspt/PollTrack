@@ -1,8 +1,9 @@
-from __future__ import print_function
 import pandas as pd
 import logging
 import traceback
 import os.path
+
+pd.options.mode.chained_assignment = None #Turns off Pandas copy warning
 
 logger = logging.getLogger(__name__)
 
@@ -107,7 +108,10 @@ class PollIO(object):
         logging.info('Latest poll data contained %d new polls.', len(new_polls_df.index))
         
         if len(new_polls_df.index) > 0:
+            new_polls_df['Start Date'] = pd.to_datetime(new_polls_df['Start Date'])
+            new_polls_df['End Date'] = pd.to_datetime(new_polls_df['End Date'])
+            new_polls_df = new_polls_df.fillna(0)
             self.new_poll_data = new_polls_df
-            return self.new_poll_data.fillna(0) #Prevents polls being posted with nan values
+            return self.new_poll_data
         else:
             self.new_poll_data = None

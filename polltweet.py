@@ -67,10 +67,16 @@ class Tweet(object):
         Undecided: {undecided_pct}
         Johnson: {johnson_pct}
         Stein: {stein_pct}
-        """.format(pollster = self.pollster, observations = self.observations, population = self.population, start_date = self.start_date,
-                   end_date = self.end_date, clinton_pct = self.clinton_pct,
-                   trump_pct = self.trump_pct, other_pct = self.other_pct,
-                   undecided_pct = self.undecided_pct, johnson_pct = self.johnson_pct,
+        """.format(pollster = self.pollster,
+                   observations = self.observations,
+                   population = self.population,
+                   start_date = self.start_date,
+                   end_date = self.end_date,
+                   clinton_pct = self.clinton_pct,
+                   trump_pct = self.trump_pct,
+                   other_pct = self.other_pct,
+                   undecided_pct = self.undecided_pct,
+                   johnson_pct = self.johnson_pct,
                    stein_pct = self.stein_pct)
 
     def __str__(self):
@@ -105,7 +111,15 @@ class PollTweet(object):
             tweet_list = []
             for row in dataframe.iterrows():
                 row = row[1]
-                tweet = Tweet(row['Pollster'] ,row['Number of Observations'], row['Population'], row['Start Date'], row['End Date'], row['Clinton'], row['Trump'], row['Other'], row['Undecided'])
+                tweet = Tweet(row['Pollster'],
+                              row['Number of Observations'],
+                              row['Population'],
+                              row['Start Date'].strftime('%b %d'), #Short date (e.g. Jun 26)
+                              row['End Date'].strftime('%b %d'),
+                              row['Clinton'],
+                              row['Trump'],
+                              row['Other'],
+                              row['Undecided'])
                 tweet_list.append(tweet)
             return tweet_list
 

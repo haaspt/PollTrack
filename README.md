@@ -6,7 +6,7 @@ A utility for scraping poll data for the 2016 presidential election from Huffing
 - [ ] Additional config options
 - [x] Short Tweet format
 - [ ] Load poll urls from config file
-- [ ] Format date in tweets
+- [x] Format date in tweets
 - [ ] Candidate hashtages?
 - [ ] Tweet rolling average
 - [ ] Reply to tweets
