@@ -1,4 +1,3 @@
-from __future__ import print_function
 import twitter
 import logging
 import traceback
