@@ -43,12 +43,23 @@ def main():
             file.close()
             logger.debug("Credentials loaded")
 
+    logger.info("Loading poll list")
+    if not os.path.isfile('polls.json'):
+        logger.error("Poll list file not found")
+        raise ConfigFileError("Poll list file not found, please re-install or restore polls.json")
+    else:
+        with open('./polls.json') as file:
+            poll_file = json.load(file)
+            poll_url_list = poll_file['poll_list']
+            file.close()
+            logger.debug("Poll list loaded")
+            
     polltweet = PollTweet(twitter_credentials['consumer_key'],
                           twitter_credentials['consumer_secret'],
                           twitter_credentials['access_token_key'],
                           twitter_credentials['access_token_secret'])
 
-    poll_url = "http://elections.huffingtonpost.com/pollster/2016-general-election-trump-vs-clinton.csv"
+    poll_url = "http://elections.huffingtonpost.com/pollster/2016-general-election-trump-vs-clinton.csv" #Replace with loop through poll_url_list
 
     logger.info("Entering main loop")
     while True:
