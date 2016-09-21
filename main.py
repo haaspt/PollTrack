@@ -11,11 +11,14 @@ import time
 class ConfigFileError(Exception):
     pass
 
-def get_and_tweet_new_polls(url, polltweet_instance):
+def get_and_tweet_new_polls(state, url, polltweet_instance):
     """Calls PollIO to check for new polls and tweets any it finds
 
     Parameters
     ----------
+    state: string
+        The state (or general scope) of the poll being passed
+
     url: string
         The url to the poll csv on HuffPoPollster
 
@@ -23,7 +26,7 @@ def get_and_tweet_new_polls(url, polltweet_instance):
         Instance of the PollTweet object
     """
     logger.debug("Attempting to get new polls")
-    pollio = PollIO(url, "./data/", "data.csv")
+    pollio = PollIO(state, url, "./data/", "data.csv") #PollIO doesn't currently accept the state parameter
     if pollio.new_poll_data is not None:
         logger.debug("Attempting to tweet new polls")
         tweet_list = polltweet_instance.pandas_to_tweet(pollio.new_poll_data)
@@ -59,11 +62,12 @@ def main():
                           twitter_credentials['access_token_key'],
                           twitter_credentials['access_token_secret'])
 
-    poll_url = "http://elections.huffingtonpost.com/pollster/2016-general-election-trump-vs-clinton.csv" #Replace with loop through poll_url_list
+#    poll_url = "http://elections.huffingtonpost.com/pollster/2016-general-election-trump-vs-clinton.csv" #Replace with loop through poll_url_list
 
     logger.info("Entering main loop")
     while True:
-        get_and_tweet_new_polls(poll_url, polltweet)
+        for state, poll_url in poll_url_list.items():
+            get_and_tweet_new_polls(state, poll_url, polltweet)
         logger.debug("Sleeping for 10 mins...")
         time.sleep(600)
         
