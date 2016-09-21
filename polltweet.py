@@ -23,7 +23,7 @@ class Tweet(object):
         self.johnson_pct = johnson_pct
         self.stein_pct = stein_pct
 
-        self.long_tweet = "#Clinton: {clinton_pct}\n#Trump: {trump_pct}\nOther: {other_pct}\nUndecided: {undecided_pct}\n\n{pollster} ({start_date} - {end_date})\n{population}".format(clinton_pct=self.clinton_pct,
+        self.long_tweet = "#Clinton: {clinton_pct:g}%\n#Trump: {trump_pct:g}%\nOther: {other_pct:g}%\nUndecided: {undecided_pct:g}%\n\n{pollster} ({start_date} - {end_date})\n{population}".format(clinton_pct=self.clinton_pct,
                                                                                                                                                                                         trump_pct = self.trump_pct,
                                                                                                                                                                                         other_pct=self.other_pct,
                                                                                                                                                                                         undecided_pct=self.undecided_pct,
@@ -32,7 +32,7 @@ class Tweet(object):
                                                                                                                                                                                         end_date=self.end_date,
                                                                                                                                                                                         population = self.population)
         
-        self.short_tweet = "C: {clinton_pct}\nT: {trump_pct}\n\n{pollster} ({start_date} - {end_date})\n{population}".format(clinton_pct = self.clinton_pct,
+        self.short_tweet = "C: {clinton_pct:g}%\nT: {trump_pct:g}%\n\n{pollster} ({start_date} - {end_date})\n{population}".format(clinton_pct = self.clinton_pct,
                                                                                                                trump_pct = self.trump_pct,
                                                                                                                pollster = self.pollster,
                                                                                                                start_date = self.start_date,
