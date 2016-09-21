@@ -9,7 +9,8 @@ logger = logging.getLogger(__name__)
 
 class PollIO(object):
 
-    def __init__(self, poll_data_url, file_path, file_name):
+    def __init__(self, state, poll_data_url, file_path, file_name):
+        self.state = state
         self.poll_data_url = poll_data_url
         self.file_path = file_path
         self.file_name = file_name
@@ -23,8 +24,9 @@ class PollIO(object):
 
         Parameters
         ----------
-        csv_url: string
+        csv_url: string, optional
             The url to the longform csv to be loaded
+            Default: self.poll_data_url
 
         Returns
         -------
@@ -35,6 +37,7 @@ class PollIO(object):
             if csv_url is None:
                 csv_url = self.poll_data_url
             df = pd.read_csv(csv_url)
+            df['State'] = self.state
             logger.info('Downloaded data contains %d polls', len(df.index))
             self.latest_poll_data = df
             return self.latest_poll_data
@@ -81,6 +84,7 @@ class PollIO(object):
         else:
             logging.error('No saved datafile found, downloading latest data')
             df = self.get_latest_poll_data()
+            df['State'] = self.state
             self.save_poll_data(df)
             self.saved_poll_data = df
             return self.saved_poll_data
