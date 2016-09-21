@@ -84,7 +84,6 @@ class PollIO(object):
         else:
             logging.error('No saved datafile found, downloading latest data')
             df = self.get_latest_poll_data()
-            df['State'] = self.state
             self.save_poll_data(df)
             self.saved_poll_data = df
             return self.saved_poll_data
