@@ -26,7 +26,11 @@ def get_and_tweet_new_polls(state, url, polltweet_instance):
         Instance of the PollTweet object
     """
     logger.debug("Attempting to get new polls")
-    pollio = PollIO(state, url, "./data/", "data.csv") #PollIO doesn't currently accept the state parameter
+    pollio = PollIO(state,
+                    url,
+                    "./data/",
+                    "{0}_data.csv".format(state).lower.replace(" ", "_")
+                    
     if pollio.new_poll_data is not None:
         logger.debug("Attempting to tweet new polls")
         tweet_list = polltweet_instance.pandas_to_tweet(pollio.new_poll_data)
