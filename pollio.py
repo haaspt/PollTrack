@@ -3,9 +3,10 @@ import logging
 import traceback
 import os.path
 
-pd.options.mode.chained_assignment = None #Turns off Pandas copy warning
+pd.options.mode.chained_assignment = None  # Turns off Pandas copy warning
 
 logger = logging.getLogger(__name__)
+
 
 class PollIO(object):
 
@@ -102,11 +103,11 @@ class PollIO(object):
         -------
         pandas dataframe containing the records only contained in the latest polls
         """
-        #Applies a hash function to create a unqiue identifier for each poll/row in both dataframes
+        # Applies a hash function to create a unqiue identifier for each poll/row in both dataframes
         latest_hash = latest_poll_df.apply(lambda x: hash(tuple(x)), axis=1)
         saved_hash = saved_poll_df.apply(lambda x: hash(tuple(x)), axis=1)
 
-        #Returns rows from the latest poll dataframe whose hash value isn't in the last saved file
+        # Returns rows from the latest poll dataframe whose hash value isn't in the last saved file
         new_polls_df = latest_poll_df[latest_hash.isin(saved_hash).apply(lambda x: not x)]
         logging.info('Latest poll data contained %d new polls.', len(new_polls_df.index))
         

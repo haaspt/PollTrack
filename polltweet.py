@@ -4,13 +4,15 @@ import traceback
 
 logger = logging.getLogger(__name__)
 
+
 class TweetError(Exception):
     pass
 
 
 class Tweet(object):
 
-    def __init__(self, pollster, observations, population, start_date, end_date, clinton_pct, trump_pct, other_pct=None, undecided_pct=None, johnson_pct=None, stein_pct=None):
+    def __init__(self, pollster, observations, population, start_date, end_date, clinton_pct, trump_pct,
+                 other_pct=None, undecided_pct=None, johnson_pct=None, stein_pct=None):
         self.pollster = pollster
         self.observations = int(observations)
         self.population = population
@@ -33,11 +35,11 @@ class Tweet(object):
                                                                                                                                                                                         population = self.population)
         
         self.short_tweet = "C: {clinton_pct:g}%\nT: {trump_pct:g}%\n\n{pollster} ({start_date} - {end_date})\n{population}".format(clinton_pct = self.clinton_pct,
-                                                                                                               trump_pct = self.trump_pct,
-                                                                                                               pollster = self.pollster,
-                                                                                                               start_date = self.start_date,
-                                                                                                                             end_date = self.end_date,
-        population = self.population)
+                                                                                                                                   trump_pct = self.trump_pct,
+                                                                                                                                   pollster = self.pollster,
+                                                                                                                                   start_date = self.start_date,
+                                                                                                                                   end_date = self.end_date,
+                                                                                                                                   population = self.population)
 
     def get_tweetable_poll(self):
         """Checks whether the long or short form of a tweet is under the character limit.
@@ -46,7 +48,7 @@ class Tweet(object):
         -------
         String less than or equal to the Twitter character limit, or None
         """
-        if len(self.long_tweet) <= 140: #Check actual character length requirements
+        if len(self.long_tweet) <= 140:  # Check actual character length requirements
             return self.long_tweet
         elif len(self.short_tweet) <= 140:
             return self.short_tweet
@@ -66,17 +68,17 @@ class Tweet(object):
         Undecided: {undecided_pct}
         Johnson: {johnson_pct}
         Stein: {stein_pct}
-        """.format(pollster = self.pollster,
-                   observations = self.observations,
-                   population = self.population,
-                   start_date = self.start_date,
-                   end_date = self.end_date,
-                   clinton_pct = self.clinton_pct,
-                   trump_pct = self.trump_pct,
-                   other_pct = self.other_pct,
-                   undecided_pct = self.undecided_pct,
-                   johnson_pct = self.johnson_pct,
-                   stein_pct = self.stein_pct)
+        """.format(pollster=self.pollster,
+                   observations=self.observations,
+                   population=self.population,
+                   start_date=self.start_date,
+                   end_date=self.end_date,
+                   clinton_pct=self.clinton_pct,
+                   trump_pct=self.trump_pct,
+                   other_pct=self.other_pct,
+                   undecided_pct=self.undecided_pct,
+                   johnson_pct=self.johnson_pct,
+                   stein_pct=self.stein_pct)
 
     def __str__(self):
         return self.long_tweet
@@ -88,12 +90,13 @@ class Tweet(object):
 class PollTweet(object):
 
     def __init__(self, user_consumer_key, user_consumer_secret, user_access_token_key, user_access_token_secret):
-        self.twitter = twitter.Api(consumer_key = user_consumer_key,
-                                   consumer_secret = user_consumer_secret,
-                                   access_token_key = user_access_token_key,
-                                   access_token_secret = user_access_token_secret)
+        self.twitter = twitter.Api(consumer_key=user_consumer_key,
+                                   consumer_secret=user_consumer_secret,
+                                   access_token_key=user_access_token_key,
+                                   access_token_secret=user_access_token_secret)
 
-    def pandas_to_tweet(self, dataframe):
+    @staticmethod
+    def pandas_to_tweet(dataframe):
         """Converts a pandas dataframe to a list of Tweet objects
 
         Parameters
@@ -113,7 +116,7 @@ class PollTweet(object):
                 tweet = Tweet(row['Pollster'],
                               row['Number of Observations'],
                               row['Population'],
-                              row['Start Date'].strftime('%b %d'), #Short date (e.g. Jun 26)
+                              row['Start Date'].strftime('%b %d'),  # Short date (e.g. Jun 26)
                               row['End Date'].strftime('%b %d'),
                               row['Clinton'],
                               row['Trump'],
@@ -137,7 +140,8 @@ class PollTweet(object):
             if tweet_to_post is not None:
                 logger.info("Tweeting poll")
                 try:
-                    self.twitter.PostUpdate(tweet_to_post, verify_status_length=False) #Currently throws a legth exception unless this is set to false. Not sure why
+                    self.twitter.PostUpdate(tweet_to_post, verify_status_length=False)
+                    # Currently throws a length exception unless this is set to false. Not sure why
                 except Exception as error:
                     logger.error(traceback.format_exc())
             else:
@@ -158,10 +162,10 @@ class PollTweet(object):
             except TweetError as error:
                 logger.error(traceback.format_exc())
 
-
     def tweet_average(self, average_data):
         # Do something
-        self.twitter.PostMedia(average_data, average_img)
+        # self.twitter.PostMedia(average_data, average_img)
+        pass
 
     def get_mentions(self):
         mentions = [mention for mention in self.twitter.GetMentions]
@@ -169,4 +173,4 @@ class PollTweet(object):
 
     def reply_to_mention(self, mention):
         # Parse mention syntax
-        return
+        pass
