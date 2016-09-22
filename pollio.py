@@ -128,8 +128,13 @@ class PollIO(object):
             # This prevents the posting of any poll with an end date older than a week ago
             lastweek = date.today() - timedelta(7)
             new_polls_df = new_polls_df[new_polls_df['End Date'] >= lastweek]
+
+            if len(new_polls_df.index) == 0:
+                self.new_poll_data = None
+                return None
             
             self.new_poll_data = new_polls_df
             return self.new_poll_data
         else:
             self.new_poll_data = None
+            return None
