@@ -11,8 +11,9 @@ class TweetError(Exception):
 
 class Tweet(object):
 
-    def __init__(self, pollster, observations, population, start_date, end_date, clinton_pct, trump_pct,
+    def __init__(self, state, pollster, observations, population, start_date, end_date, clinton_pct, trump_pct,
                  other_pct=None, undecided_pct=None, johnson_pct=None, stein_pct=None):
+        self.state = state
         self.pollster = pollster
         self.observations = int(observations)
         self.population = population
@@ -25,7 +26,8 @@ class Tweet(object):
         self.johnson_pct = johnson_pct
         self.stein_pct = stein_pct
 
-        self.long_tweet = "#Clinton: {clinton_pct:g}%\n#Trump: {trump_pct:g}%\nOther: {other_pct:g}%\nUndecided: {undecided_pct:g}%\n\n{pollster} ({start_date} - {end_date})\n{population}".format(clinton_pct=self.clinton_pct,
+        self.long_tweet = "#{state} Poll\n#Clinton: {clinton_pct:g}%\n#Trump: {trump_pct:g}%\nOther: {other_pct:g}%\nUndecided: {undecided_pct:g}%\n\n{pollster} ({start_date} - {end_date})\n{population}".format(state=self.state,
+                                                                                                                                                                                                                   clinton_pct=self.clinton_pct,
                                                                                                                                                                                         trump_pct = self.trump_pct,
                                                                                                                                                                                         other_pct=self.other_pct,
                                                                                                                                                                                         undecided_pct=self.undecided_pct,
@@ -34,7 +36,8 @@ class Tweet(object):
                                                                                                                                                                                         end_date=self.end_date,
                                                                                                                                                                                         population = self.population)
         
-        self.short_tweet = "C: {clinton_pct:g}%\nT: {trump_pct:g}%\n\n{pollster} ({start_date} - {end_date})\n{population}".format(clinton_pct = self.clinton_pct,
+        self.short_tweet = "{state}\nC: {clinton_pct:g}%\nT: {trump_pct:g}%\n\n{pollster} ({start_date} - {end_date})\n{population}".format(state=self.state,
+                                                                                                                                            clinton_pct = self.clinton_pct,
                                                                                                                                    trump_pct = self.trump_pct,
                                                                                                                                    pollster = self.pollster,
                                                                                                                                    start_date = self.start_date,
@@ -57,6 +60,7 @@ class Tweet(object):
         
     def __repr__(self):
         return """
+        State: {state}
         Pollster: {pollster}
         Observations: {observations}
         Population: {population}
@@ -68,7 +72,8 @@ class Tweet(object):
         Undecided: {undecided_pct}
         Johnson: {johnson_pct}
         Stein: {stein_pct}
-        """.format(pollster=self.pollster,
+        """.format(state=self.state,
+                   pollster=self.pollster,
                    observations=self.observations,
                    population=self.population,
                    start_date=self.start_date,
@@ -113,7 +118,8 @@ class PollTweet(object):
             tweet_list = []
             for row in dataframe.iterrows():
                 row = row[1]
-                tweet = Tweet(row['Pollster'],
+                tweet = Tweet(row['State'],
+                              row['Pollster'],
                               row['Number of Observations'],
                               row['Population'],
                               row['Start Date'].strftime('%b %d'),  # Short date (e.g. Jun 26)
