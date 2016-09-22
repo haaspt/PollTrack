@@ -144,7 +144,7 @@ class PollTweet(object):
         else:
             tweet_to_post = tweet.get_tweetable_poll()
             if tweet_to_post is not None:
-                logger.info("Tweeting poll")
+                logger.info("Tweeting %s poll", tweet.state)
                 try:
                     self.twitter.PostUpdate(tweet_to_post, verify_status_length=False)
                     # Currently throws a length exception unless this is set to false. Not sure why

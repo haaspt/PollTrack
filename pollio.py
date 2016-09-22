@@ -36,7 +36,7 @@ class PollIO(object):
         pandas dataframe of the loaded data
         """
         try:
-            logger.debug('Downloading latest polls from web address')
+            logger.debug('Downloading latest %s polls from web address', self.state)
             if csv_url is None:
                 csv_url = self.poll_data_url
             df = pd.read_csv(csv_url)
@@ -117,18 +117,17 @@ class PollIO(object):
 
         # Returns rows from the latest poll dataframe whose hash value isn't in the last saved file
         new_polls_df = latest_poll_df[latest_hash.isin(saved_hash).apply(lambda x: not x)]
-
-        if len(new_polls_df.index) > 0:
-            logging.info('Latest poll data contained %d new polls.', len(new_polls_df.index))
         
         if len(new_polls_df.index) > 0:
+            logging.info('Hash comparison indicates %d new polls.', len(new_polls_df.index))
             new_polls_df['Start Date'] = pd.to_datetime(new_polls_df['Start Date'])
             new_polls_df['End Date'] = pd.to_datetime(new_polls_df['End Date'])
             new_polls_df = new_polls_df.fillna(0)
             # This prevents the posting of any poll with an end date older than a week ago
             lastweek = date.today() - timedelta(7)
             new_polls_df = new_polls_df[new_polls_df['End Date'] >= lastweek]
-
+            logging.info('%d polls found within the last 7 days', len(new_polls_df.index))
+            
             if len(new_polls_df.index) == 0:
                 self.new_poll_data = None
                 return None
