@@ -34,12 +34,11 @@ def get_and_tweet_new_polls(state, url, polltweet_instance):
                     "./data/",
                     "{0}_data.csv".format(state).lower().replace(" ", "_")
                     )
-                    
+    pollio.save_poll_data()
     if pollio.new_poll_data is not None:
         logger.debug("Attempting to tweet new polls")
         tweet_list = polltweet_instance.pandas_to_tweet(pollio.new_poll_data)
         polltweet_instance.tweet_polls(tweet_list)
-        pollio.save_poll_data()
 
 
 def main():
