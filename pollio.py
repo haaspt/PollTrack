@@ -45,7 +45,7 @@ class PollIO(object):
             if 'Johnson' in df.columns:
                 df['Other'] = df['Johnson'] + df['Other']
             # End of extra formatting
-            logger.info('Downloaded data contains %d polls', len(df.index))
+            logger.debug('Downloaded data contains %d polls', len(df.index))
             self.latest_poll_data = df
             return self.latest_poll_data
         except Exception as error:
@@ -115,7 +115,9 @@ class PollIO(object):
 
         # Returns rows from the latest poll dataframe whose hash value isn't in the last saved file
         new_polls_df = latest_poll_df[latest_hash.isin(saved_hash).apply(lambda x: not x)]
-        logging.info('Latest poll data contained %d new polls.', len(new_polls_df.index))
+
+        if len(new_polls_df.index) > 0:
+            logging.info('Latest poll data contained %d new polls.', len(new_polls_df.index))
         
         if len(new_polls_df.index) > 0:
             new_polls_df['Start Date'] = pd.to_datetime(new_polls_df['Start Date'])
