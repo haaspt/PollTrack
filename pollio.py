@@ -38,7 +38,13 @@ class PollIO(object):
             if csv_url is None:
                 csv_url = self.poll_data_url
             df = pd.read_csv(csv_url)
+            # Extra formatting for state polls
             df['State'] = self.state
+            if 'Other' not in df.columns:
+                df['Other'] = 0.0
+            if 'Johnson' in df.columns:
+                df['Other'] = df['Johnson'] + df['Other']
+            # End of extra formatting
             logger.info('Downloaded data contains %d polls', len(df.index))
             self.latest_poll_data = df
             return self.latest_poll_data
