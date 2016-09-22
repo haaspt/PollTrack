@@ -3,6 +3,8 @@ import logging
 import traceback
 import os.path
 
+from datetime import date, timedelta
+
 pd.options.mode.chained_assignment = None  # Turns off Pandas copy warning
 
 logger = logging.getLogger(__name__)
@@ -123,6 +125,10 @@ class PollIO(object):
             new_polls_df['Start Date'] = pd.to_datetime(new_polls_df['Start Date'])
             new_polls_df['End Date'] = pd.to_datetime(new_polls_df['End Date'])
             new_polls_df = new_polls_df.fillna(0)
+            # This prevents the posting of any poll with an end date older than a week ago
+            lastweek = date.today() - timedelta(7)
+            new_polls_df = new_polls_df[new_polls_df['End Date'] >= lastweek]
+            
             self.new_poll_data = new_polls_df
             return self.new_poll_data
         else:
