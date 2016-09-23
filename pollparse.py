@@ -1,28 +1,92 @@
-from __future__ import print_function
+from __future__ import division
 import pandas as pd
 import logging
+import os.path
 
 logger = logging.getLogger(__name__)
 
+
+class FileLoadError(Exception):
+    pass
+
+
 class PollParse(object):
 
-    def combine_polls(self, dataframe1, dataframe2):
-        """Combines two dataframes of polling data
+    @staticmethod
+    def load_dataframe(self, *filepaths):
+        """Loads a series of saved CSV files from disk and returns them as a list of pandas dataframes
 
         Parameters
         ----------
-        dataframe1, dataframe2: pandas dataframes
+        *filepaths: string
+            An arbitrary number of filepaths to the dataframes to be loaded
+
+        Returns
+        -------
+        list of pandas dataframes
+        """
+
+        for filepath in filepaths:
+            if not os.path.isfile(filepath):
+                raise FileLoadError('Specified file does not exist: %s', filepath)
+
+        list_of_dataframes = map(lambda x: pd.read_csv(x), [filename for filename in filepaths])
+        return list_of_dataframes
+
+    @staticmethod
+    def combine_polls(self, list_of_dataframes):
+        """Combines multiple dataframes into one
+
+        Parameters
+        ----------
+        list_of_dataframes: list of pandas dataframes
             
         Returns
         -------
         pandas dataframe of the combined data
         """
 
-        #Actual code should go here
+        frames = [list_of_dataframes]
+        combined_df = pd.concat(frames)
         return combined_df
 
+    @staticmethod
     def rolling_average(self, dataframe):
 
-        #This code doesn't work yet
-        dataframe.resample('1d').median().rolling(window=14, min_period=1).mean().fillna(method='ffill')
+        dataframe.resample('1d').median().rolling(window=7, min_periods=1).mean().fillna(method='ffill')
         return dataframe
+
+    @staticmethod
+    def parse_poll(dataframe):
+        """Performs a series of transformations and filters on the poll dataframe to prepare it for a rolling average.
+        The following steps are take:
+        1. Polls that target specific voter groups (Republican, Democrat, Independent) are filtered out
+        2. The Start and End Date columns are transformed to datetime format
+        3. The index is set to be the average time between the poll's start and end dates
+        4. Unnecessary columns are discarded
+        5. NAN values are replaced with 0.0
+
+        Parameters
+        ----------
+        dataframe: pandas dataframe
+
+        Returns
+        -------
+        pandas dataframe ready for rolling average
+        """
+
+        df = dataframe[~dataframe['Population'].str.contains('Republican') &
+                       ~dataframe['Population'].str.contains('Democrat') &
+                       ~dataframe['Population'].str.contains('independent')]  # I know that's not capitalized
+
+        df[['Start Date', 'End Date']] = df[['Start Date', 'End Date']].apply(lambda x: pd.to_datetime(x))
+
+        df.index = df['End Date'] - ((df['End Date'] - df['Start Date']) / 2)
+
+        valid_column_labels = ['Clinton', 'Trump', 'Johnson', 'Stein', 'Undecided', 'Other']
+        available_column_labels = df.columns
+        present_column_labels = [label for label in available_column_labels if label in valid_column_labels]
+
+        df = df[present_column_labels]
+
+        return df
