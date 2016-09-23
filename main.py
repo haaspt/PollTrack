@@ -51,11 +51,12 @@ def tweet_polling_average():
         list_of_dataframes = PollParse.load_dataframes('./data/national_data.csv', './data/national_(4-way)_data.csv')
     except FileLoadError as e:
         logging.critical('Error while loading file: %s', e)
-    else:
-        combined_dataframe = PollParse.combine_dataframes(list_of_dataframes)
-        parsed_dataframe = PollParse.parse_poll(combined_dataframe)
-        rolling_average = PollParse.rolling_average(parsed_dataframe)
-        # Do more stuff
+        raise
+
+    combined_dataframe = PollParse.combine_dataframes(list_of_dataframes)
+    parsed_dataframe = PollParse.parse_poll(combined_dataframe)
+    rolling_average = PollParse.rolling_average(parsed_dataframe)
+    # Do more stuff
 
 
 def main():
