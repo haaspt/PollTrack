@@ -119,6 +119,7 @@ class PollIO(object):
         new_polls_df = latest_poll_df[latest_hash.isin(saved_hash).apply(lambda x: not x)]
         
         if len(new_polls_df.index) > 0:
+            logging.info('Possible new polls found for %s', self.state)
             logging.info('Hash comparison indicates %d new polls.', len(new_polls_df.index))
             new_polls_df['Start Date'] = pd.to_datetime(new_polls_df['Start Date'])
             new_polls_df['End Date'] = pd.to_datetime(new_polls_df['End Date'])
