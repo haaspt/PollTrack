@@ -3,6 +3,8 @@ import pandas as pd
 import logging
 import os.path
 
+pd.options.mode.chained_assignment = None  # Turns off Pandas copy warning
+
 logger = logging.getLogger(__name__)
 
 
@@ -13,7 +15,7 @@ class FileLoadError(Exception):
 class PollParse(object):
 
     @staticmethod
-    def load_dataframe(self, *filepaths):
+    def load_dataframe(*filepaths):
         """Loads a series of saved CSV files from disk and returns them as a list of pandas dataframes
 
         Parameters
@@ -34,7 +36,7 @@ class PollParse(object):
         return list_of_dataframes
 
     @staticmethod
-    def combine_polls(self, list_of_dataframes):
+    def combine_polls(list_of_dataframes):
         """Combines multiple dataframes into one
 
         Parameters
@@ -46,12 +48,12 @@ class PollParse(object):
         pandas dataframe of the combined data
         """
 
-        frames = [list_of_dataframes]
+        frames = list_of_dataframes
         combined_df = pd.concat(frames)
         return combined_df
 
     @staticmethod
-    def rolling_average(self, dataframe):
+    def rolling_average(dataframe):
 
         dataframe.resample('1d').median().rolling(window=7, min_periods=1).mean().fillna(method='ffill')
         return dataframe
@@ -88,5 +90,7 @@ class PollParse(object):
         present_column_labels = [label for label in available_column_labels if label in valid_column_labels]
 
         df = df[present_column_labels]
+
+        df = df.fillna(0)
 
         return df
