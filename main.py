@@ -7,7 +7,7 @@ import os.path
 import time
 
 from pollio import PollIO
-from pollparse import  PollParse, FileLoadError
+from pollparse import PollParse, FileLoadError
 from polltweet import PollTweet
 
 
