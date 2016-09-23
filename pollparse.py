@@ -15,7 +15,7 @@ class FileLoadError(Exception):
 class PollParse(object):
 
     @staticmethod
-    def load_dataframe(*filepaths):
+    def load_dataframes(*filepaths):
         """Loads a series of saved CSV files from disk and returns them as a list of pandas dataframes
 
         Parameters
@@ -36,7 +36,7 @@ class PollParse(object):
         return list_of_dataframes
 
     @staticmethod
-    def combine_polls(list_of_dataframes):
+    def combine_dataframes(list_of_dataframes):
         """Combines multiple dataframes into one
 
         Parameters

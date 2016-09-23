@@ -7,6 +7,7 @@ import os.path
 import time
 
 from pollio import PollIO
+from pollparse import  PollParse, FileLoadError
 from polltweet import PollTweet
 
 
@@ -41,6 +42,20 @@ def get_and_tweet_new_polls(state, url, polltweet_instance):
         logger.debug("Attempting to tweet new polls")
         tweet_list = polltweet_instance.pandas_to_tweet(pollio.new_poll_data)
         polltweet_instance.tweet_polls(tweet_list)
+
+
+def tweet_polling_average():
+    """Calculates the 7 day rolling average of the national polls, creates a plot, and then posts a multimedia tweet
+    """
+    try:
+        list_of_dataframes = PollParse.load_dataframes('./data/national_data.csv', './data/national_(4-way)_data.csv')
+    except FileLoadError as e:
+        logging.critical('Error while loading file: %s', e)
+    else:
+        combined_dataframe = PollParse.combine_dataframes(list_of_dataframes)
+        parsed_dataframe = PollParse.parse_poll(combined_dataframe)
+        rolling_average = PollParse.rolling_average(parsed_dataframe)
+        # Do more stuff
 
 
 def main():
