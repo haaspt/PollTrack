@@ -76,8 +76,8 @@ def main():
     while True:
         for state, poll_url in poll_url_list.items():
             get_and_tweet_new_polls(state, poll_url, polltweet)
-        logger.debug("Sleeping for 10 mins...")
-        time.sleep(600)
+        logger.debug("Sleeping for 5 mins...")
+        time.sleep(300)
         
 if __name__ == "__main__":
     logging.basicConfig(filename='applog.log',
