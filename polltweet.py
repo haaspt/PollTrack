@@ -92,6 +92,22 @@ class Tweet(object):
         return {"long": len(self.long_tweet), "short": len(self.short_tweet)}
 
 
+class MediaTweet(object):
+
+    def __init__(self, clinton_avg, trump_avg, figure_location)
+
+    self.clinton_avg = clinton_avg
+    self.trump_avg = trump_avg
+    self.figure_location = figure_location
+    self.tweet_text = """7-day #National Average\n#Clinton: {clinton_avg:g}%\n#Trump: {trump_avg:g}%""".format(clinton_avg=self.clinton_avg,
+                                                                                                               trump_avg=self.trump_avg)
+    def __repr__(self):
+        return (self.tweet_text, self.figure_location)
+    
+    def __str__(self):
+        return self.tweet_text
+
+    
 class PollTweet(object):
 
     def __init__(self, user_consumer_key, user_consumer_secret, user_access_token_key, user_access_token_secret):
@@ -131,6 +147,25 @@ class PollTweet(object):
                 tweet_list.append(tweet)
             return tweet_list
 
+    def tweet_graph(self, mediatweet):
+        """Posts a single graph to Twitter
+
+        Parameters
+        ----------
+        mediatweet: MediaTweet (object)
+        """
+        
+        if not isinstance(mediatweet, MediaTweet):
+            raise TweetError("Object is not a MediaTweet object. Unable to post")
+        else:
+            mediatweet_text = mediatweet.tweet_text
+            mediatweet_figure = mediatweet.figure_location
+            logger.info("Tweeting average graph")
+            try:
+                self.twitter.PostMedia(mediatweet_text, mediatweet_figure, verify_status_length=False)
+            except Exception as error:
+                logger.error(traceback.format_exc())
+        
     def tweet_poll(self, tweet):
         """Posts a single poll to Twitter
 

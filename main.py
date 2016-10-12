@@ -45,9 +45,10 @@ def get_and_tweet_new_polls(state, url, polltweet_instance):
         polltweet_instance.tweet_polls(tweet_list)
 
 
-def get_average_plot():
+def get_and_tweet_average_plot(polltweet_instance):
     """Calculates the 7 day rolling average of the national polls and creates a plot
     """
+    logger.debug("Attempting to get data to average")
     try:
         list_of_dataframes = PollParse.load_dataframes('./data/national_data.csv', './data/national_(4-way)_data.csv')
     except FileLoadError as e:
@@ -55,12 +56,21 @@ def get_average_plot():
         raise
 
     combined_dataframe = PollParse.combine_dataframes(list_of_dataframes)
+    logger.debug("Parsing average poll data")
     polls = PollParse.parse_poll(combined_dataframe)
     avg = PollParse.rolling_average(polls)
     error = PollParse.rolling_error(polls)
-
+    
+    logger.debug("Plotting average poll data")
     plot = PollParse.plot_poll(polls, avg, error)
-    return plot
+    plot_file = save_plot(plot)
+
+    clinton_avg = avg['Clinton'].ix[avg.index.max()] #Pretty sure this doesn't work
+    trump_avg = avg['Trump'].ix[avg.index.max()]
+    
+    mediatweet = polltweet_instance.MediaTweet(clinton_avg, trump_avg, plot_file)
+    polltweet_instance.tweet_graph(mediatweet)
+
 
 def save_plot(plot_object, filename=None):
     """Saves a pyplot figure to disk and returns the saved filename (+path)
