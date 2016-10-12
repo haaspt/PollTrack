@@ -99,7 +99,7 @@ class PollParse(object):
 
         ax.grid(True)
         axes = fig.gca()
-        axes.set_xlim([start_date, today])
+        axes.set_xlim([start_date, polls_df.index.max()])
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %d'))
         ax.yaxis.set_major_formatter(mtick.FormatStrFormatter('%.0f%%'))
         plt.tight_layout()
