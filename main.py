@@ -4,6 +4,7 @@ from __future__ import print_function
 import json
 import logging
 import os.path
+import os
 import time
 
 from pollio import PollIO
@@ -44,8 +45,8 @@ def get_and_tweet_new_polls(state, url, polltweet_instance):
         polltweet_instance.tweet_polls(tweet_list)
 
 
-def tweet_polling_average():
-    """Calculates the 7 day rolling average of the national polls, creates a plot, and then posts a multimedia tweet
+def get_average_plot():
+    """Calculates the 7 day rolling average of the national polls and creates a plot
     """
     try:
         list_of_dataframes = PollParse.load_dataframes('./data/national_data.csv', './data/national_(4-way)_data.csv')
@@ -59,7 +60,20 @@ def tweet_polling_average():
     error = PollParse.rolling_error(polls)
 
     plot = PollParse.plot_poll(polls, avg, error)
-    # Do more stuff
+    return plot
+
+def save_plot(plot_object, filename=None):
+    """Saves a pyplot figure to disk and returns the saved filename (+path)
+    """
+    
+    if not os.path.exists('./figs/'):
+        os.makedirs('./figs/')
+
+    if filename is None:
+        filename = './figs/avg_plot_' + time.now() + '.png'
+
+    plot_object.savefig(filename)
+    return filename
 
 def main():
 
