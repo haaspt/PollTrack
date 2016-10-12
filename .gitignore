@@ -11,5 +11,5 @@
 *.png
 
 #iPython Notebooks
-*.ipnynb
+*.ipynb
 .ipynb_checkpoints/
