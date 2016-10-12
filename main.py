@@ -54,10 +54,12 @@ def tweet_polling_average():
         raise
 
     combined_dataframe = PollParse.combine_dataframes(list_of_dataframes)
-    parsed_dataframe = PollParse.parse_poll(combined_dataframe)
-    rolling_average = PollParse.rolling_average(parsed_dataframe)
-    # Do more stuff
+    polls = PollParse.parse_poll(combined_dataframe)
+    avg = PollParse.rolling_average(polls)
+    error = PollParse.rolling_error(polls)
 
+    plot = PollParse.plot_poll(polls, avg, error)
+    # Do more stuff
 
 def main():
 
