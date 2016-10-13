@@ -126,9 +126,12 @@ class PollIO(object):
         if len(new_polls_df.index) > 0:
             logging.info('Possible new polls found for %s', self.state)
             logging.info('Hash comparison indicates %d new polls.', len(new_polls_df.index))
-            new_polls_df['Start Date'] = pd.to_datetime(new_polls_df['Start Date'])
-            new_polls_df['End Date'] = pd.to_datetime(new_polls_df['End Date'])
+            new_polls_df[['Start Date', 'End Date']] = new_polls_df[['Start Date', 'End Date']].apply(lambda x: pd.to_datetime(x))
             new_polls_df = new_polls_df.fillna(0)
+            # Prevents polls of specific voter populations being posted
+            new_polls_df = new_polls_df[~new_polls_df['Population'].str.contains('Republican') &
+                                        ~new_polls_df['Population'].str.contains('Democrat') &
+                                        ~new_polls_df['Population'].str.contains('independent')]
             # This prevents the posting of any poll with an end date older than a week ago
             lastweek = date.today() - timedelta(7)
             new_polls_df = new_polls_df[new_polls_df['End Date'] >= lastweek]
