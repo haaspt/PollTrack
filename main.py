@@ -72,8 +72,8 @@ def get_and_tweet_average_plot(polltweet_instance):
     plot = PollParse.plot_poll(polls, avg, error)
     plot_file = save_plot(plot)
 
-    clinton_avg = round(avg['Clinton'].ix[avg.index.max()], 2)
-    trump_avg = round(avg['Trump'].ix[avg.index.max()], 2)
+    clinton_avg = round(avg['Clinton'].ix[avg.index.max()], 1)
+    trump_avg = round(avg['Trump'].ix[avg.index.max()], 1)
     
     mediatweet = MediaTweet(clinton_avg, trump_avg, plot_file)
     polltweet_instance.tweet_graph(mediatweet)
