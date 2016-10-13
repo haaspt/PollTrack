@@ -7,9 +7,9 @@
 #Log Files
 *.log
 
-#Figures
-*.png
-
 #iPython Notebooks
 *.ipynb
 .ipynb_checkpoints/
+
+#Figures
+*.png

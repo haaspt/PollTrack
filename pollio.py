@@ -117,6 +117,11 @@ class PollIO(object):
 
         # Returns rows from the latest poll dataframe whose hash value isn't in the last saved file
         new_polls_df = latest_poll_df[latest_hash.isin(saved_hash).apply(lambda x: not x)]
+
+        # Removes polls of specific voter populations (Rep, Dem, Ind)
+        new_polls_df = new_polls_df[~new_polls_df['Population'].str.contains('Republican') &
+                                    ~new_polls_df['Population'].str.contains('Democrat') &
+                                    ~new_polls_df['Population'].str.contains('independent')]
         
         if len(new_polls_df.index) > 0:
             logging.info('Possible new polls found for %s', self.state)
