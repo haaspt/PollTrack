@@ -6,14 +6,21 @@ import logging
 import os.path
 import os
 import time
+import schedule
+from datetime import date
 
 from pollio import PollIO
 from pollparse import PollParse, FileLoadError
-from polltweet import PollTweet
+from polltweet import PollTweet, MediaTweet
 
 
 class ConfigFileError(Exception):
     pass
+
+
+def process_poll_list(poll_url_list, polltweet_instance):
+    for state, poll_url in poll_url_list.items():
+        get_and_tweet_new_polls(state, poll_url, polltweet_instance)
 
 
 def get_and_tweet_new_polls(state, url, polltweet_instance):
@@ -65,10 +72,10 @@ def get_and_tweet_average_plot(polltweet_instance):
     plot = PollParse.plot_poll(polls, avg, error)
     plot_file = save_plot(plot)
 
-    clinton_avg = avg['Clinton'].ix[avg.index.max()] #Pretty sure this doesn't work
+    clinton_avg = avg['Clinton'].ix[avg.index.max()]
     trump_avg = avg['Trump'].ix[avg.index.max()]
     
-    mediatweet = polltweet_instance.MediaTweet(clinton_avg, trump_avg, plot_file)
+    mediatweet = MediaTweet(clinton_avg, trump_avg, plot_file)
     polltweet_instance.tweet_graph(mediatweet)
 
 
@@ -80,10 +87,11 @@ def save_plot(plot_object, filename=None):
         os.makedirs('./figs/')
 
     if filename is None:
-        filename = './figs/avg_plot_' + time.now() + '.png'
+        filename = './figs/avg_plot_' + str(date.today()) + '.png'
 
     plot_object.savefig(filename)
     return filename
+
 
 def main():
 
@@ -114,12 +122,13 @@ def main():
                           twitter_credentials['access_token_key'],
                           twitter_credentials['access_token_secret'])
 
+    logger.info("Scheduling tasks")
+    schedule.every(5).minutes.do(process_poll_list, poll_url_list, polltweet)
+    schedule.every().day.at("12:01").do(get_and_tweet_average_plot, polltweet)
     logger.info("Entering main loop")
     while True:
-        for state, poll_url in poll_url_list.items():
-            get_and_tweet_new_polls(state, poll_url, polltweet)
-        logger.debug("Sleeping for 10 mins...")
-        time.sleep(600)
+        schedule.run_pending()
+        time.sleep(10)
         
 if __name__ == "__main__":
     logging.basicConfig(filename='applog.log',
