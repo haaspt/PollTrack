@@ -68,7 +68,6 @@ class PollParse(object):
         error = dataframe.resample('1d').std().rolling(window=7, min_periods=1).mean().fillna(method='ffill')
         return error
 
-
     @staticmethod
     def plot_poll(polls_df, avg_df, error_df, window=60):
 
@@ -106,8 +105,6 @@ class PollParse(object):
         fig.autofmt_xdate()
 
         return fig
-
-
 
     @staticmethod
     def parse_poll(dataframe):

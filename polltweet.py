@@ -94,15 +94,15 @@ class Tweet(object):
 
 class MediaTweet(object):
 
-    def __init__(self, clinton_avg, trump_avg, figure_location)
+    def __init__(self, clinton_avg, trump_avg, figure_location):
 
-    self.clinton_avg = clinton_avg
-    self.trump_avg = trump_avg
-    self.figure_location = figure_location
-    self.tweet_text = """7-day #National Average\n#Clinton: {clinton_avg:g}%\n#Trump: {trump_avg:g}%""".format(clinton_avg=self.clinton_avg,
-                                                                                                               trump_avg=self.trump_avg)
+        self.clinton_avg = clinton_avg
+        self.trump_avg = trump_avg
+        self.figure_location = figure_location
+        self.tweet_text = "#Election2016 7-day Average\n#Clinton: {clinton_avg:g}%\n#Trump: {trump_avg:g}%".format(clinton_avg=self.clinton_avg,
+                                                                                                                   trump_avg=self.trump_avg)
     def __repr__(self):
-        return (self.tweet_text, self.figure_location)
+        return str((self.tweet_text, self.figure_location))
     
     def __str__(self):
         return self.tweet_text
@@ -162,7 +162,7 @@ class PollTweet(object):
             mediatweet_figure = mediatweet.figure_location
             logger.info("Tweeting average graph")
             try:
-                self.twitter.PostMedia(mediatweet_text, mediatweet_figure, verify_status_length=False)
+                self.twitter.PostMedia(mediatweet_text, mediatweet_figure)
             except Exception as error:
                 logger.error(traceback.format_exc())
         
