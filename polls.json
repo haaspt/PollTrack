@@ -1,6 +1,5 @@
 {"poll_list":
- {"National": "http://elections.huffingtonpost.com/pollster/2016-general-election-trump-vs-clinton.csv",
-  "National (4-way)": "http://elections.huffingtonpost.com/pollster/2016-general-election-trump-vs-clinton-vs-johnson.csv",
+ {"National": "http://elections.huffingtonpost.com/pollster/2016-general-election-trump-vs-clinton-vs-johnson.csv",
   "Alabama": "http://elections.huffingtonpost.com/pollster/2016-alabama-president-trump-vs-clinton.csv",
   "Alaska": "http://elections.huffingtonpost.com/pollster/2016-alaska-president-trump-vs-clinton.csv",
   "Arizona": "http://elections.huffingtonpost.com/pollster/2016-arizona-president-trump-vs-clinton.csv",
