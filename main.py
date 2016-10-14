@@ -57,7 +57,7 @@ def get_and_tweet_average_plot(polltweet_instance):
     """
     logger.debug("Attempting to get data to average")
     try:
-        list_of_dataframes = PollParse.load_dataframes('./data/national_data.csv', './data/national_(4-way)_data.csv')
+        list_of_dataframes = PollParse.load_dataframes('./data/national_data.csv')
     except FileLoadError as e:
         logging.critical('Error while loading file: %s', e)
         raise
@@ -134,6 +134,6 @@ def main():
 if __name__ == "__main__":
     logging.basicConfig(filename='applog.log',
                         format='%(asctime)s-%(name)s :: %(levelname)s :: %(message)s',
-                        level=logging.INFO)
+                        level=logging.ERROR)
     logger = logging.getLogger(__name__)
     main()
