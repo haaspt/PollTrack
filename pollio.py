@@ -35,11 +35,16 @@ class PollIO(object):
         -------
         pandas dataframe of the loaded data
         """
+        logger.debug('Downloading latest %s polls from web address', self.state)
+        if csv_url is None:
+            csv_url = self.poll_data_url
         try:
-            logger.debug('Downloading latest %s polls from web address', self.state)
-            if csv_url is None:
-                csv_url = self.poll_data_url
             df = pd.read_csv(csv_url)
+        except Exception:
+            logger.error(traceback.format_exc())
+            self.latest_poll_data = None
+            return None
+        else:
             # Extra formatting for state polls
             df['State'] = self.state
             if 'Other' not in df.columns:
@@ -50,9 +55,6 @@ class PollIO(object):
             logger.debug('Downloaded data contains %d polls', len(df.index))
             self.latest_poll_data = df
             return self.latest_poll_data
-        except Exception as error:
-            logger.error(traceback.format_exc())
-            return None
 
     def save_poll_data(self, dataframe=None, filename=None, filepath=None):
         """Saves a dataframe to the designated location
