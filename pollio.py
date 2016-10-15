@@ -42,6 +42,7 @@ class PollIO(object):
             df = pd.read_csv(csv_url)
         except Exception:
             logger.error(traceback.format_exc())
+            self.latest_poll_data = None
             return None
         else:
             # Extra formatting for state polls
