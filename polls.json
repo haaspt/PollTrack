@@ -1,6 +1,5 @@
 {"poll_list":
- {"National": "http://elections.huffingtonpost.com/pollster/2016-general-election-trump-vs-clinton.csv",
-  "National (4-way)": "http://elections.huffingtonpost.com/pollster/2016-general-election-trump-vs-clinton-vs-johnson.csv",
+ {"National": "http://elections.huffingtonpost.com/pollster/2016-general-election-trump-vs-clinton-vs-johnson.csv",
   "Alabama": "http://elections.huffingtonpost.com/pollster/2016-alabama-president-trump-vs-clinton.csv",
   "Alaska": "http://elections.huffingtonpost.com/pollster/2016-alaska-president-trump-vs-clinton.csv",
   "Arizona": "http://elections.huffingtonpost.com/pollster/2016-arizona-president-trump-vs-clinton.csv",
@@ -8,7 +7,7 @@
   "California": "http://elections.huffingtonpost.com/pollster/2016-california-presidential-general-election-trump-vs-clinton.csv",
   "Colorado": "http://elections.huffingtonpost.com/pollster/2016-colorado-president-trump-vs-clinton.csv",
   "Connecticut": "http://elections.huffingtonpost.com/pollster/2016-connecticut-president-trump-vs-clinton.csv",
-  "Delaware": "http://elections.huffingtonpost.com/pollster/2016-connecticut-president-trump-vs-clinton.csv",
+  "Delaware": "http://elections.huffingtonpost.com/pollster/2016-delaware-president-trump-vs-clinton.csv",
   "Florida": "http://elections.huffingtonpost.com/pollster/2016-florida-presidential-general-election-trump-vs-clinton.csv",
   "Georgia": "http://elections.huffingtonpost.com/pollster/2016-georgia-president-trump-vs-clinton.csv",
   "Hawaii": "http://elections.huffingtonpost.com/pollster/2016-hawaii-president-trump-vs-clinton.csv",

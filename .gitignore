@@ -6,3 +6,10 @@
 
 #Log Files
 *.log
+
+#iPython Notebooks
+*.ipynb
+.ipynb_checkpoints/
+
+#Figures
+*.png

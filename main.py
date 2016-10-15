@@ -4,14 +4,23 @@ from __future__ import print_function
 import json
 import logging
 import os.path
+import os
 import time
+import schedule
+from datetime import date
 
 from pollio import PollIO
-from polltweet import PollTweet
+from pollparse import PollParse, FileLoadError
+from polltweet import PollTweet, MediaTweet
 
 
 class ConfigFileError(Exception):
     pass
+
+
+def process_poll_list(poll_url_list, polltweet_instance):
+    for state, poll_url in poll_url_list.items():
+        get_and_tweet_new_polls(state, poll_url, polltweet_instance)
 
 
 def get_and_tweet_new_polls(state, url, polltweet_instance):
@@ -43,6 +52,47 @@ def get_and_tweet_new_polls(state, url, polltweet_instance):
         polltweet_instance.tweet_polls(tweet_list)
 
 
+def get_and_tweet_average_plot(polltweet_instance):
+    """Calculates the 7 day rolling average of the national polls and creates a plot
+    """
+    logger.debug("Attempting to get data to average")
+    try:
+        list_of_dataframes = PollParse.load_dataframes('./data/national_data.csv')
+    except FileLoadError as e:
+        logging.critical('Error while loading file: %s', e)
+        raise
+
+    combined_dataframe = PollParse.combine_dataframes(list_of_dataframes)
+    logger.debug("Parsing average poll data")
+    polls = PollParse.parse_poll(combined_dataframe)
+    avg = PollParse.rolling_average(polls)
+    error = PollParse.rolling_error(polls)
+    
+    logger.debug("Plotting average poll data")
+    plot = PollParse.plot_poll(polls, avg, error)
+    plot_file = save_plot(plot)
+
+    clinton_avg = round(avg['Clinton'].ix[avg.index.max()], 1)
+    trump_avg = round(avg['Trump'].ix[avg.index.max()], 1)
+    
+    mediatweet = MediaTweet(clinton_avg, trump_avg, plot_file)
+    polltweet_instance.tweet_graph(mediatweet)
+
+
+def save_plot(plot_object, filename=None):
+    """Saves a pyplot figure to disk and returns the saved filename (+path)
+    """
+    
+    if not os.path.exists('./figs/'):
+        os.makedirs('./figs/')
+
+    if filename is None:
+        filename = './figs/avg_plot_' + str(date.today()) + '.png'
+
+    plot_object.savefig(filename)
+    return filename
+
+
 def main():
 
     logger.info("PollTrack starting. Loading credentials")
@@ -72,16 +122,18 @@ def main():
                           twitter_credentials['access_token_key'],
                           twitter_credentials['access_token_secret'])
 
+    logger.info("Scheduling tasks")
+    schedule.every(5).minutes.do(process_poll_list, poll_url_list, polltweet)
+    schedule.every().day.at("12:01").do(get_and_tweet_average_plot, polltweet)
     logger.info("Entering main loop")
     while True:
-        for state, poll_url in poll_url_list.items():
-            get_and_tweet_new_polls(state, poll_url, polltweet)
-        logger.debug("Sleeping for 10 mins...")
-        time.sleep(600)
+        schedule.run_pending()
+        time.sleep(10)
+
         
 if __name__ == "__main__":
     logging.basicConfig(filename='applog.log',
                         format='%(asctime)s-%(name)s :: %(levelname)s :: %(message)s',
-                        level=logging.INFO)
+                        level=logging.ERROR)
     logger = logging.getLogger(__name__)
     main()
