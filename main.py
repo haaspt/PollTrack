@@ -57,7 +57,7 @@ def get_and_tweet_average_plot(state_name, polltweet_instance):
     """
 
     data_file = "./data/" + state_name.lower().replace(" ", "_") + "_data.csv"
-    if not os.isfile(data_file):
+    if not os.path.isfile(data_file):
         logging.critical("Failed to load state data file, file does not exist: %s", data_file)
         raise FileLoadError
     
@@ -81,7 +81,7 @@ def get_and_tweet_average_plot(state_name, polltweet_instance):
     clinton_avg = round(avg['Clinton'].ix[avg.index.max()], 1)
     trump_avg = round(avg['Trump'].ix[avg.index.max()], 1)
 
-    if state == "National":
+    if state_name == "National":
         mediatweet = MediaTweet(clinton_avg, trump_avg, plot_file)
     else:
         mediatweet = MediaTweet(clinton_avg, trump_avg, plot_file, state=state_name)
@@ -147,7 +147,7 @@ def main():
     schedule.every(5).minutes.do(process_poll_list, poll_url_list, polltweet)
     for state, job_time in plot_config.iteritems():
         logger.info("Scheduling %s average plot", state)
-        schedule.every().day.at(job_time).do(get_and_tweet_average_plot, [state, polltweet])
+        schedule.every().day.at(job_time).do(get_and_tweet_average_plot, state, polltweet)
     logger.info("Entering main loop")
     while True:
         schedule.run_pending()
