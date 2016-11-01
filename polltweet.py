@@ -94,13 +94,21 @@ class Tweet(object):
 
 class MediaTweet(object):
 
-    def __init__(self, clinton_avg, trump_avg, figure_location):
+    def __init__(self, clinton_avg, trump_avg, figure_location, state=None):
 
         self.clinton_avg = clinton_avg
         self.trump_avg = trump_avg
         self.figure_location = figure_location
-        self.tweet_text = "#Election2016 7-day Average\n#Clinton: {clinton_avg:g}%\n#Trump: {trump_avg:g}%".format(clinton_avg=self.clinton_avg,
-                                                                                                                   trump_avg=self.trump_avg)
+        self.state = state
+
+        if not self.state:
+            self.tweet_text = "#Election2016 7-day Average\n#Clinton: {clinton_avg:g}%\n#Trump: {trump_avg:g}%".format(clinton_avg=self.clinton_avg,
+                                                                                                                       trump_avg=self.trump_avg)
+        else:
+            self.tweet_text = "{state} 7-day Average\n#Clinton: {clinton_avg:g}%\n#Trump: {trump_avg:g}%".format(state=self.state,
+                                                                                                                 clinton_avg=self.clinton_avg,
+                                                                                                                 trump_avg=self.trump_avg)
+            
     def __repr__(self):
         return str((self.tweet_text, self.figure_location))
     

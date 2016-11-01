@@ -52,12 +52,18 @@ def get_and_tweet_new_polls(state, url, polltweet_instance):
         polltweet_instance.tweet_polls(tweet_list)
 
 
-def get_and_tweet_average_plot(polltweet_instance):
+def get_and_tweet_average_plot(state_name, polltweet_instance):
     """Calculates the 7 day rolling average of the national polls and creates a plot
     """
+
+    data_file = "./data/" + state_name.lower().replace(" ", "_") + "_data.csv"
+    if not os.isfile(data_file):
+        logging.critical("Failed to load state data file, file does not exist: %s", data_file)
+        raise FileLoadError
+    
     logger.debug("Attempting to get data to average")
     try:
-        list_of_dataframes = PollParse.load_dataframes('./data/national_data.csv')
+        list_of_dataframes = PollParse.load_dataframes(data_file)
     except FileLoadError as e:
         logging.critical('Error while loading file: %s', e)
         raise
@@ -74,8 +80,12 @@ def get_and_tweet_average_plot(polltweet_instance):
 
     clinton_avg = round(avg['Clinton'].ix[avg.index.max()], 1)
     trump_avg = round(avg['Trump'].ix[avg.index.max()], 1)
-    
-    mediatweet = MediaTweet(clinton_avg, trump_avg, plot_file)
+
+    if state == "National":
+        mediatweet = MediaTweet(clinton_avg, trump_avg, plot_file)
+    else:
+        mediatweet = MediaTweet(clinton_avg, trump_avg, plot_file, state=state_name)
+        
     polltweet_instance.tweet_graph(mediatweet)
 
 
@@ -116,6 +126,17 @@ def main():
             poll_url_list = poll_file['poll_list']
             infile.close()
             logger.debug("Poll list loaded")
+
+    logger.info("Loading plot configuration")
+    if not os.path.isfile('plots.config'):
+        logger.error("Plot configuration file not found")
+        raise ConfigFileError("Plot config file not found, please re-install or restore plots.config")
+    else:
+        with open('./plots.config') as infile:
+            config_file = json.load(infile)
+            plot_config = config_file['plot_config']
+            infile.close()
+            logger.debug("Plot config loaded")
             
     polltweet = PollTweet(twitter_credentials['consumer_key'],
                           twitter_credentials['consumer_secret'],
@@ -124,7 +145,9 @@ def main():
 
     logger.info("Scheduling tasks")
     schedule.every(5).minutes.do(process_poll_list, poll_url_list, polltweet)
-    schedule.every().day.at("12:01").do(get_and_tweet_average_plot, polltweet)
+    for state, job_time in plot_config.iteritems():
+        logger.info("Scheduling %s average plot", state)
+        schedule.every().day.at(job_time).do(get_and_tweet_average_plot, [state, pollwteet])
     logger.info("Entering main loop")
     while True:
         schedule.run_pending()
