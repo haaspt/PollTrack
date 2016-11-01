@@ -98,7 +98,7 @@ def save_plot(plot_object, state_name=None, filename=None):
 
     if filename is None:
         if state_name is not None:
-            filename = './figs/' state_name.lower().replace(" ","_") + '_avg_plot_' + str(date.today()) + '.png'
+            filename = './figs/' + state_name.lower().replace(" ","_") + '_avg_plot_' + str(date.today()) + '.png'
         else:
             filename = './figs/avg_plot_' + str(date.today()) + '.png'
 
