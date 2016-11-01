@@ -147,7 +147,7 @@ def main():
     schedule.every(5).minutes.do(process_poll_list, poll_url_list, polltweet)
     for state, job_time in plot_config.iteritems():
         logger.info("Scheduling %s average plot", state)
-        schedule.every().day.at(job_time).do(get_and_tweet_average_plot, [state, pollwteet])
+        schedule.every().day.at(job_time).do(get_and_tweet_average_plot, [state, polltweet])
     logger.info("Entering main loop")
     while True:
         schedule.run_pending()
