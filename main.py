@@ -76,7 +76,7 @@ def get_and_tweet_average_plot(state_name, polltweet_instance):
     
     logger.debug("Plotting average poll data")
     plot = PollParse.plot_poll(polls, avg, error)
-    plot_file = save_plot(plot)
+    plot_file = save_plot(plot, state_name=state_name)
 
     clinton_avg = round(avg['Clinton'].ix[avg.index.max()], 1)
     trump_avg = round(avg['Trump'].ix[avg.index.max()], 1)
@@ -89,7 +89,7 @@ def get_and_tweet_average_plot(state_name, polltweet_instance):
     polltweet_instance.tweet_graph(mediatweet)
 
 
-def save_plot(plot_object, filename=None):
+def save_plot(plot_object, state_name=None, filename=None):
     """Saves a pyplot figure to disk and returns the saved filename (+path)
     """
     
@@ -97,7 +97,10 @@ def save_plot(plot_object, filename=None):
         os.makedirs('./figs/')
 
     if filename is None:
-        filename = './figs/avg_plot_' + str(date.today()) + '.png'
+        if state_name is not None:
+            filename = './figs/' state_name.lower().replace(" ","_") + '_avg_plot_' + str(date.today()) + '.png'
+        else:
+            filename = './figs/avg_plot_' + str(date.today()) + '.png'
 
     plot_object.savefig(filename)
     return filename
